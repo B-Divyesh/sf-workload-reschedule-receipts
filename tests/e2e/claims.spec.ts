@@ -2,6 +2,8 @@ import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import path from 'node:path';
 
+const checkoutUrl = 'https://api.sociobot.in/api/v1/products/workload-reschedule-receipts/checkout';
+
 test('@claim:reschedule-receipt turns a missed block into a revised plan and receipt', async ({ page }) => {
   await page.goto('/demo');
   await expect(page.getByRole('heading', { name: 'What this miss changes' })).toBeVisible();
@@ -70,12 +72,19 @@ test('@claim:free-core allows four tasks and explains the fifth', async ({ page 
 test('@claim:paid-checkout shows the exact price, hosted checkout, and paid receipt history', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByText('$9 once', { exact: true })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Buy the one-time license' })).toHaveAttribute('href', 'https://api.sociobot.in/api/v1/products/workload-reschedule-receipts/checkout');
+  await expect(page.getByRole('link', { name: 'Buy the one-time license' })).toHaveAttribute('href', checkoutUrl);
   await page.route('https://api.sociobot.in/**', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ valid: true, reason: 'ok' }) }));
   await page.goto('/demo?license=test-license');
   await expect(page.getByText('Unlimited license active')).toBeVisible();
   await page.getByRole('button', { name: /^Mark .* missed$/ }).first().click();
   await expect(page.getByRole('heading', { name: 'Past receipts' })).toBeVisible();
+});
+
+test('@claim:paid-checkout uses an enabled hosted Sociobot checkout', async ({ request }) => {
+  const response = await request.get(checkoutUrl, { maxRedirects: 0 });
+  expect(response.status(), 'checkout must redirect to Sociobot’s hosted checkout').toBeGreaterThanOrEqual(300);
+  expect(response.status()).toBeLessThan(400);
+  expect(response.headers().location, 'checkout must provide its hosted destination').toBeTruthy();
 });
 
 test('@claim:offline-reload reloads the demo without a network', async ({ page, context }) => {
@@ -109,4 +118,28 @@ test('landing and planner have no serious accessibility issues or console errors
     expect(results.violations.filter((item) => ['serious', 'critical'].includes(item.impact ?? ''))).toEqual([]);
   }
   expect(errors).toEqual([]);
+});
+
+test('dark routes keep footer text and links readable', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  for (const route of ['/', '/demo', '/planner', '/privacy', '/terms']) {
+    await page.goto(route);
+    await expect(page.locator('.site-footer')).toHaveCSS('background-color', 'rgb(5, 10, 8)');
+    await expect(page.locator('.site-footer')).toHaveCSS('color', 'rgb(244, 240, 230)');
+    await expect(page.locator('.site-footer a').first()).toHaveCSS('color', 'rgb(244, 240, 230)');
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations.filter((item) => ['serious', 'critical'].includes(item.impact ?? ''))).toEqual([]);
+  }
+});
+
+test('390px core controls retain 44px touch targets', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/demo');
+  const controls = page.locator('.site-header a, .demo-banner button, .demo-banner a, .plan-actions button');
+  for (let index = 0; index < await controls.count(); index += 1) {
+    const box = await controls.nth(index).boundingBox();
+    expect(box, `control ${index} should be visible`).not.toBeNull();
+    expect(box!.width, `control ${index} width`).toBeGreaterThanOrEqual(44);
+    expect(box!.height, `control ${index} height`).toBeGreaterThanOrEqual(44);
+  }
 });
