@@ -69,22 +69,19 @@ test('@claim:free-core allows four tasks and explains the fifth', async ({ page 
   await expect(page.locator('.task-item')).toHaveCount(4);
 });
 
-test('@claim:paid-checkout shows the exact price, hosted checkout, and paid receipt history', async ({ page }) => {
+test('@claim:paid-checkout shows the exact price, reaches hosted checkout, and enables paid receipt history', async ({ page, request }) => {
   await page.goto('/');
   await expect(page.getByText('$9 once', { exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Buy the one-time license' })).toHaveAttribute('href', checkoutUrl);
+  const response = await request.get(checkoutUrl, { maxRedirects: 0 });
+  expect(response.status(), 'checkout must redirect to Sociobot’s hosted checkout').toBeGreaterThanOrEqual(300);
+  expect(response.status()).toBeLessThan(400);
+  expect(response.headers().location, 'checkout must provide its hosted destination').toBeTruthy();
   await page.route('https://api.sociobot.in/**', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ valid: true, reason: 'ok' }) }));
   await page.goto('/demo?license=test-license');
   await expect(page.getByText('Unlimited license active')).toBeVisible();
   await page.getByRole('button', { name: /^Mark .* missed$/ }).first().click();
   await expect(page.getByRole('heading', { name: 'Past receipts' })).toBeVisible();
-});
-
-test('@claim:paid-checkout uses an enabled hosted Sociobot checkout', async ({ request }) => {
-  const response = await request.get(checkoutUrl, { maxRedirects: 0 });
-  expect(response.status(), 'checkout must redirect to Sociobot’s hosted checkout').toBeGreaterThanOrEqual(300);
-  expect(response.status()).toBeLessThan(400);
-  expect(response.headers().location, 'checkout must provide its hosted destination').toBeTruthy();
 });
 
 test('@claim:offline-reload reloads the demo without a network', async ({ page, context }) => {

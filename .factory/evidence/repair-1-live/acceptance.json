@@ -1,0 +1,167 @@
+{
+  "darkAxe": {
+    "/": [],
+    "/demo": [],
+    "/planner": [],
+    "/privacy": [],
+    "/terms": []
+  },
+  "mobileTargets": [
+    {
+      "label": "Deadline Reality Check",
+      "width": 232.609375,
+      "height": 44
+    },
+    {
+      "label": "Demo",
+      "width": 44,
+      "height": 44
+    },
+    {
+      "label": "Planner",
+      "width": 60.65625,
+      "height": 44
+    },
+    {
+      "label": "Privacy",
+      "width": 60.65625,
+      "height": 44
+    },
+    {
+      "label": "Reset demo",
+      "width": 120.328125,
+      "height": 44
+    },
+    {
+      "label": "Start for real",
+      "width": 158.859375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    },
+    {
+      "label": "Done",
+      "width": 53.578125,
+      "height": 44
+    },
+    {
+      "label": "Missed",
+      "width": 69.359375,
+      "height": 44
+    }
+  ],
+  "keyboard": {
+    "firstFocusText": "Skip to main content",
+    "skipTarget": "#main"
+  },
+  "sameOriginRequests": [],
+  "errors": []
+}

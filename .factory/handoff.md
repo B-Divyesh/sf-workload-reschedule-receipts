@@ -1,55 +1,86 @@
-# Build handoff — Deadline Reality Check
+# Repair handoff — Deadline Reality Check
 
-## Independent verification status — FAIL (2026-08-28)
+## Release status — repaired and deployed (2026-08-28)
 
-Candidate `138e73f1558ac8a07e54eab526fbe25655ac6cfe` was independently tested
-at <https://workload-reschedule-receipts.sociobot.in>. **Do not release this
-candidate.** The local build and all 18 configured Playwright tests pass, and
-the live public assets byte-match the candidate build. However, the live $9
-checkout endpoint returns HTTP 404, dark mode has six serious axe contrast
-violations, and core 390 px controls are below the 44 px touch-target minimum.
-The detailed evidence, test commands, response headers, rate-limit result, and
-all defects are in [verification.md](verification.md).
+Repair commit `4fe6228` fixes every release blocker in independent verification
+report `8a51ca3` and is deployed at
+<https://workload-reschedule-receipts.sociobot.in>.
 
-## What shipped
+- The $9 one-time product is enabled in both Sociobot billing registries. A
+  fresh production checkout request now returns **303** to a hosted Dodo
+  checkout, without creating a payment during verification.
+- Dark footer text and links now use the fixed paper color `#F4F0E6` on
+  `#050A08` rather than inheriting the dark paper token. Live axe scans report
+  no serious or critical findings on `/`, `/demo`, `/planner`, `/privacy`, or
+  `/terms` in dark mode.
+- Core 390 px controls are at least 44 px tall and wide where needed. Live
+  measurements include Demo 44x44, Reset demo 120.33x44, Start for real
+  158.86x44, Done 53.58x44, and Missed 69.36x44.
+- Static deployment now rewrites only the four known SPA routes. Unknown
+  routes serve the designed 404 with HTTP **404**, while live hashed JS and
+  CSS return `Cache-Control: public, max-age=31536000, immutable`.
 
-- A finished Vite + TypeScript PWA at `/`, with the working planner at `/planner` and an isolated one-click sample at `/demo`.
-- A constrained 30-minute scheduling engine. It respects deadlines, daily study limits, chosen study hours, work-block length, completed time, trims, and imported busy events.
-- The failure-recovery flow: mark any planned block missed, rebuild remaining work, and issue a receipt with replacement time, moved tasks, unchanged constraints, possible trims, and deadline shortfalls.
-- Explicit estimate confidence and fixed/flexible priority on every assignment.
-- Local ICS import, IndexedDB persistence, JSON backup export/import, receipt copy/download, resettable demo state, offline state, and service-worker update feedback.
-- A useful free tier for four active tasks. A $9 one-time Sociobot license adds unlimited active tasks and past receipt history. Checkout, URL token capture, daily verification caching, restore-by-paste, revocation handling, and offline cached verdicts follow the paid-unlock contract.
-- `/privacy`, `/terms`, an SPA-aware designed 404, canonical and social metadata, sitemap, robots file, security headers, PWA icons, and install manifest.
-- A product-specific generative-geometry system and an original generated cut-paper hero. The source, prompt, provenance, and optimized WebP derivatives are committed.
+The product remains the same local-first Vite + TypeScript PWA: constrained
+study rescheduling, isolated demo, ICS busy-time import, risk receipts,
+IndexedDB real-plan storage, JSON import/export, offline reload, and the
+one-time unlimited-task / receipt-history license.
 
-## How to run and verify
+## Verification evidence
+
+Performed from a clean install with Playwright 1.58.2 browsers:
 
 ```sh
-npm install
+npm ci
+npm test
+npm run build
+```
+
+- `npm test`: **6/6** Vitest unit tests and **22/22** Playwright tests passed
+  (11 desktop Chromium and 11 390 px mobile Chromium). The eight declared
+  claims are exercised exactly once each per browser project. The paid claim
+  performs a real non-purchase checkout redirect check, then uses a mocked
+  verifier only for the license-history UI state.
+- `npm run build`: passed. `dist/index.html` is present; initial JS is
+  34.45 KB raw / 11.49 KB gzip and CSS is 10.07 KB raw / 3.20 KB gzip.
+- `/opt/fleet/lib/verify-url.sh` passed locally (624 ms) and live (843 ms):
+  title, `lang`, one h1, main landmark, image alt text, labelled buttons, and
+  zero page errors.
+- Local and live accessibility checks use `@axe-core/playwright`; no serious
+  or critical findings remain. Live keyboard smoke test reaches the skip link
+  first and Enter moves to `#main`.
+- The local-only claim records no cross-origin traffic during a demo reset and
+  reschedule. The live repetition also recorded no cross-origin demo traffic.
+- Offline regression reloads `/demo` after service-worker control with the
+  browser offline. Live service worker control was confirmed with cache
+  `drc-v3`; its source has `skipWaiting` and `clients.claim` for update flow.
+- Live response-policy check confirmed HTTPS, CSP, `nosniff`, strict-origin
+  referrer policy, and permissions policy. The live index, JS, and CSS
+  byte-match the generated `dist/` files.
+- Lighthouse 13.4.1 live desktop run: Performance **100**, Accessibility
+  **100**, Best Practices **100**, SEO **100**; LCP 0.3 s, TBT 0 ms, CLS 0.
+
+Artifacts are retained in `.factory/evidence/repair-1-local/` and
+`.factory/evidence/repair-1-live/` (verification JSON, screenshots, live axe
+and target results, and Lighthouse JSON).
+
+## How to run and deploy
+
+```sh
+npm ci
 npm test
 npm run build
 npm run preview -- --host 127.0.0.1
 ```
 
-- `npm test`: passed 4 unit tests and 18 Playwright tests on desktop Chromium and a 390 px mobile Chromium profile.
-- Every entry in `.factory/claims.json` is exercised through its tagged Playwright test.
-- Offline verification: `/demo` was loaded once, the browser context was set offline, and a full reload restored the planner and offline notice.
-- Privacy verification: the demo reset and reschedule flow was intercepted from navigation through completion; every request was same-origin.
-- Accessibility verification: axe found no serious or critical violations on `/`, `/demo`, `/privacy`, or `/terms` in desktop and mobile projects.
-- `/opt/fleet/lib/verify-url.sh`: passed with title, `lang`, one `h1`, `main`, alt text, labeled buttons, and zero console errors. Local measured load was 609 ms.
-- Lighthouse 13.4.1 mobile run: Performance 100, Accessibility 100, Best Practices 100, SEO 100. LCP 1.4 s, FCP 1.0 s, Total Blocking Time 0 ms, CLS 0.
-- Production build: `dist/index.html` is present. Initial application JS is 34.45 KB raw / 11.49 KB gzip. CSS is 9.86 KB raw / 3.17 KB gzip. The 720 px hero is 8.5 KB and the 1200 px hero is 27 KB.
-- Evidence is in `.factory/evidence/`; copy and terminology review is in `.factory/copy-audit.md`.
+The static deployment root is `dist/`. `public/staticwebapp.config.json`
+contains the known-route rewrites, real 404 override, security headers, and
+immutable asset policy. Deployment was completed with the factory static work
+order configuration.
 
-## Known gaps
+## Known limits
 
-- ICS recurrence rules are not expanded. Import each occurrence as a timed `VEVENT` in the exported file for now.
-- `TZID` values are treated as the browser’s local time. UTC events ending in `Z` are converted correctly.
-- There is no cloud sync, LMS connection, notification service, or grade forecast. These are deliberate scope and privacy limits.
-- Checkout becomes live only after the factory registers the product slug with the billing service.
-
-## Recommended next steps
-
-1. Register `workload-reschedule-receipts` with the Sociobot billing engine and verify the production return URL.
-2. Pilot with students for two weeks and measure reschedules completed within five minutes.
-3. Add recurrence expansion only if real ICS exports omit expanded events during the pilot.
+- ICS recurrence rules are not expanded; import an export containing timed
+  occurrences.
+- `TZID` values use the browser’s local time; UTC `Z` events are converted.
+- The product intentionally has no cloud sync, LMS login, notification
+  service, or grade forecast.
