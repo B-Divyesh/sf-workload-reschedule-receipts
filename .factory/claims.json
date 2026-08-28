@@ -1,0 +1,58 @@
+[
+  {
+    "id": "reschedule-receipt",
+    "claim": "Marking a missed block produces a constrained revised plan and risk receipt.",
+    "where": "landing preview, planner, README",
+    "test": "npm test -- --grep @claim:reschedule-receipt",
+    "sandbox": "fresh browser context at /demo; click a sample block and assert a new receipt and revised blocks"
+  },
+  {
+    "id": "ics-import",
+    "claim": "Imports timed events from an ICS calendar as unavailable time.",
+    "where": "landing how-it-works, planner, README",
+    "test": "npm test -- --grep @claim:ics-import",
+    "sandbox": "fresh browser context; upload the shipped two-event fixture and assert both events are accepted"
+  },
+  {
+    "id": "data-export",
+    "claim": "Exports the local plan as a JSON backup.",
+    "where": "planner, privacy, README",
+    "test": "npm test -- --grep @claim:data-export",
+    "sandbox": "fresh browser context; download the backup and parse its required arrays"
+  },
+  {
+    "id": "demo-isolation",
+    "claim": "Demo sample data is isolated and is not saved into a real plan.",
+    "where": "demo banner, privacy, README",
+    "test": "npm test -- --grep @claim:demo-isolation",
+    "sandbox": "fresh browser context; open demo, then start for real and assert the real plan is empty"
+  },
+  {
+    "id": "local-only",
+    "claim": "Assignment and calendar data stay in the browser during planning.",
+    "where": "landing facts, privacy, README",
+    "test": "npm test -- --grep @claim:local-only",
+    "sandbox": "fresh browser context; intercept the complete demo reset and reschedule flow and assert every request is same-origin"
+  },
+  {
+    "id": "free-core",
+    "claim": "The complete rescheduler is free for four active tasks.",
+    "where": "landing facts, paid section, planner",
+    "test": "npm test -- --grep @claim:free-core",
+    "sandbox": "fresh browser context; add four tasks, assert all plan, then assert the fifth is declined with the stated limit"
+  },
+  {
+    "id": "paid-checkout",
+    "claim": "Unlimited active tasks and receipt history cost $9 once through Sociobot checkout.",
+    "where": "landing paid section, planner, terms",
+    "test": "npm test -- --grep @claim:paid-checkout",
+    "sandbox": "fresh browser context; assert the exact price and checkout URL, mock a valid verifier response, and assert a second demo miss appears in Past receipts"
+  },
+  {
+    "id": "offline-reload",
+    "claim": "Works offline after the first visit.",
+    "where": "landing facts, terms, README",
+    "test": "npm test -- --grep @claim:offline-reload",
+    "sandbox": "fresh browser context at /demo; wait for service worker control, set the context offline, reload, and assert the planner and offline state"
+  }
+]

@@ -33,13 +33,15 @@ export function clearLicense(): void {
 export function cachedLicenseState(): LicenseState {
   const token = localStorage.getItem(KEY);
   if (!token) return { active: false };
+  const raw = localStorage.getItem(VERDICT_KEY);
+  if (!raw) return { active: false };
   try {
-    const verdict = JSON.parse(localStorage.getItem(VERDICT_KEY) ?? '{}') as { valid?: boolean };
-    return verdict.valid === false
-      ? { active: false, notice: 'This license is no longer active.' }
-      : { active: true };
+    const verdict = JSON.parse(raw) as { valid?: boolean };
+    return verdict.valid === true
+      ? { active: true }
+      : { active: false, notice: 'This license is no longer active.' };
   } catch {
-    return { active: true };
+    return { active: false };
   }
 }
 

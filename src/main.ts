@@ -169,6 +169,11 @@ function receiptCard(receipt: Receipt): string {
   </article>`;
 }
 
+function receiptHistory(): string {
+  if (!license.active || state.receipts.length < 2) return '';
+  return `<section class="panel" aria-labelledby="history-title"><h2 id="history-title">Past receipts</h2><ol class="task-list">${state.receipts.slice(1).map((receipt) => `<li class="task-item"><span><span class="task-title">${esc(taskById(receipt.missedTaskId)?.title)}</span><br><span class="meta">${esc(formatDateTime(receipt.createdAt))} · ${receipt.risks.length ? `${receipt.risks.length} at risk` : 'no deadline at risk'}</span></span></li>`).join('')}</ol></section>`;
+}
+
 function taskList(): string {
   if (!state.tasks.length) return `<div class="empty"><h3>No assignments yet</h3><p>Add a task above. Its study blocks will appear beside this form.</p></div>`;
   return `<ul class="task-list">${state.tasks.map((task) => `<li class="task-item">
@@ -206,6 +211,7 @@ function planner(): string {
       <div>
         ${latest ? receiptCard(latest) : `<section class="panel panel-signal" aria-labelledby="plan-title"><h2 id="plan-title">Your next study blocks</h2><p class="muted">Mark any block missed to get a new plan and receipt.</p>${planBlocks()}</section>`}
         ${latest ? `<section class="panel" aria-labelledby="revised-title"><h2 id="revised-title">Revised study blocks</h2>${planBlocks()}</section>` : ''}
+        ${receiptHistory()}
       </div>
     </div>
     ${!license.active ? pricingSection() : ''}
@@ -266,6 +272,7 @@ async function handleAction(element: HTMLElement): Promise<void> {
   }
   if (action === 'miss') {
     state = missBlock(state, id);
+    if (!license.active) state.receipts = state.receipts.slice(0, 1);
     await persist();
     render();
     showToast('The plan changed. Read the receipt first.');
