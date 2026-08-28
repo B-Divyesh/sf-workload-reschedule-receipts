@@ -1,0 +1,8 @@
+{
+  "generator": "/opt/fleet/lib/gen-image.sh",
+  "deployment": "factory-image",
+  "date": "2026-08-28",
+  "size": "1536x1024",
+  "quality": "high",
+  "prompt": "Editorial still-life of a weekly study plan made from cream graph paper and precise cut-paper geometry. One vivid burnt-orange paper strip leaves a sequence of moss-green rectangular blocks, bends around one charcoal missing square, and rejoins the path. Clean warm paper field, subtle ruled grid, restrained depth. Tactile cut paper with mathematical generative geometry, crisp edges, quiet Swiss editorial composition. Landscape composition, key objects centered-right with generous calm negative space, useful square crop. Soft directional desk light and short shadows. Palette: warm cream, near-black ink, moss green, burnt orange, one small golden marker. No letters, no numbers, no calendar labels, no UI, no people, no logos, no watermark. Avoid gradients, glassmorphism, neon, generic 3D blobs, hands, brands, illegible text."
+}

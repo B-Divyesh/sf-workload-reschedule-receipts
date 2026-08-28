@@ -1,0 +1,9 @@
+{
+  "slug": "workload-reschedule-receipts",
+  "title": "Deadline Reality Check",
+  "summary": "Reschedule missed study time and see which deadlines are at risk.",
+  "artifact_class": "pwa-offline",
+  "monetization": "one-time",
+  "smallest_useful_product": "Local calendar importer where a learner enters task chunks and marks one block missed; it proposes a constrained reschedule and emits an honest risk receipt.",
+  "constraints": "Use local calendar data or explicit ICS imports only; no institutional credentials; make uncertainty and user-entered estimates visible."
+}
