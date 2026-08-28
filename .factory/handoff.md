@@ -1,5 +1,16 @@
 # Build handoff — Deadline Reality Check
 
+## Independent verification status — FAIL (2026-08-28)
+
+Candidate `138e73f1558ac8a07e54eab526fbe25655ac6cfe` was independently tested
+at <https://workload-reschedule-receipts.sociobot.in>. **Do not release this
+candidate.** The local build and all 18 configured Playwright tests pass, and
+the live public assets byte-match the candidate build. However, the live $9
+checkout endpoint returns HTTP 404, dark mode has six serious axe contrast
+violations, and core 390 px controls are below the 44 px touch-target minimum.
+The detailed evidence, test commands, response headers, rate-limit result, and
+all defects are in [verification.md](verification.md).
+
 ## What shipped
 
 - A finished Vite + TypeScript PWA at `/`, with the working planner at `/planner` and an isolated one-click sample at `/demo`.
