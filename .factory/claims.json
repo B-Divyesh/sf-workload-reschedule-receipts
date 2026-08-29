@@ -1,7 +1,7 @@
 [
   {
     "id": "reschedule-receipt",
-    "claim": "Marking a missed block produces a constrained revised plan and risk receipt.",
+    "claim": "Marking a missed block produces a revised plan and risk receipt.",
     "where": "landing preview, planner, README",
     "test": "npm test -- --grep @claim:reschedule-receipt",
     "sandbox": "fresh browser context at /demo; click a sample block and assert a new receipt and revised blocks"
@@ -29,17 +29,17 @@
   },
   {
     "id": "demo-isolation",
-    "claim": "Demo sample data is isolated and is not saved into a real plan.",
+    "claim": "Demo sample data stays in memory and is not saved into a real plan.",
     "where": "demo banner, privacy, README",
     "test": "npm test -- --grep @claim:demo-isolation",
-    "sandbox": "fresh browser context; open demo, then start for real and assert the real plan is empty"
+    "sandbox": "fresh browser context; open demo, reset and reschedule it, inspect IndexedDB, then start for real and assert the real plan is empty"
   },
   {
     "id": "local-only",
-    "claim": "Assignment and calendar data stay in the browser during planning.",
+    "claim": "Planning data stays on this site and uses no analytics, third-party fonts, or runtime content CDNs.",
     "where": "landing facts, privacy, README",
     "test": "npm test -- --grep @claim:local-only",
-    "sandbox": "fresh browser context; intercept the complete demo reset and reschedule flow and assert every request is same-origin"
+    "sandbox": "fresh browser context; record every request during the complete demo reset and reschedule flow and assert every request is same-origin"
   },
   {
     "id": "free-core",
@@ -61,5 +61,40 @@
     "where": "landing facts, terms, README",
     "test": "npm test -- --grep @claim:offline-reload",
     "sandbox": "fresh browser context at /demo; wait for service worker control, set the context offline, reload, and assert the planner and offline state"
+  },
+  {
+    "id": "manual-estimate-trims",
+    "claim": "Estimates change only when the student chooses a trim.",
+    "where": "landing receipt preview, planner receipt",
+    "test": "npm test -- --grep @claim:manual-estimate-trims",
+    "sandbox": "fresh browser context at /demo; assert a missed block leaves a sample estimate unchanged, then choose Trim 30 min and assert that estimate changes by 30 minutes"
+  },
+  {
+    "id": "uncertainty-visible",
+    "claim": "Rough estimates stay marked in a receipt for review.",
+    "where": "landing planning scope, planner receipt",
+    "test": "npm test -- --grep @claim:uncertainty-visible",
+    "sandbox": "fresh browser context at /demo; assert a sample rough estimate and its receipt review label are visible"
+  },
+  {
+    "id": "indexeddb-storage",
+    "claim": "Real plans are stored in this browser’s IndexedDB database.",
+    "where": "README",
+    "test": "npm test -- --grep @claim:indexeddb-storage",
+    "sandbox": "fresh browser context at /planner; add a task, reload, and inspect IndexedDB for deadline-reality-check:real"
+  },
+  {
+    "id": "license-token-privacy",
+    "claim": "License checks send the stored token to the Sociobot billing API.",
+    "where": "privacy, README",
+    "test": "npm test -- --grep @claim:license-token-privacy",
+    "sandbox": "fresh browser context; accept a license URL, record the mocked verifier request, and assert its Sociobot origin, GET method, query token, and empty request body"
+  },
+  {
+    "id": "billing-terms",
+    "claim": "Sociobot and Dodo are the merchant of record; their checkout handles payment and refunds.",
+    "where": "terms",
+    "test": "npm test -- --grep @claim:billing-terms",
+    "sandbox": "fresh browser context; assert the published terms name the merchant and refund handling, and assert the Buy link starts at Sociobot checkout"
   }
 ]

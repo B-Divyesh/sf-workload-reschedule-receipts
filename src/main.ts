@@ -4,7 +4,7 @@ import { parseIcs } from './ics';
 import { acceptLicenseFromUrl, cachedLicenseState, checkoutUrl, storeLicense, verifyLicense } from './license';
 import type { LicenseState } from './license';
 import { buildPlan, emptyState, formatDateTime, formatMinutes, markBlockDone, missBlock, uid } from './scheduler';
-import { clearState, loadState, saveState } from './storage';
+import { loadState, saveState } from './storage';
 import type { AppState, Receipt, StudyTask } from './types';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -24,6 +24,15 @@ const titles: Record<string, string> = {
   '/privacy': 'Privacy — Deadline Reality Check',
   '/terms': 'Terms — Deadline Reality Check',
   '/404': 'Page not found — Deadline Reality Check',
+};
+
+const metadata: Record<string, { description: string; path: string }> = {
+  '/': { description: 'Reschedule missed study time and get a plain receipt of moved work and deadline risk.', path: '/' },
+  '/planner': { description: 'Add assignments, protect busy time, and rebuild a study plan after a missed block.', path: '/planner' },
+  '/demo': { description: 'Try Deadline Reality Check with isolated sample assignments and a reschedule receipt.', path: '/demo' },
+  '/privacy': { description: 'Learn how Deadline Reality Check stores plans and handles license checks.', path: '/privacy' },
+  '/terms': { description: 'Read the Deadline Reality Check terms, license details, and purchase information.', path: '/terms' },
+  '/404': { description: 'Return to Deadline Reality Check, the local planner for missed study time.', path: '/404.html' },
 };
 
 function esc(value: unknown): string {
@@ -148,7 +157,6 @@ function shell(content: string, current: string): string {
     <footer class="site-footer">
       <span>Reschedule missed study time and see deadline risk.</span>
       <span class="footer-links"><a href="/privacy" data-route>Privacy</a><a href="/terms" data-route>Terms</a><a href="https://sociobot.in" rel="external">Built by Param Factory <span class="visually-hidden">(external)</span></a><span>v1.0.0</span></span>
-      <small>Hero image generated for this product with Azure AI Foundry.</small>
     </footer>
     <div class="toast" role="status" data-toast hidden></div>`;
 }
@@ -157,7 +165,7 @@ function landing(): string {
   return shell(`<main id="main">
     <section class="hero">
       <div class="hero-copy">
-        <span class="eyebrow">The plan after the plan</span>
+        <span class="eyebrow">Missed-study rescheduler</span>
         <h1 tabindex="-1">Reschedule missed study time</h1>
         <p class="hero-lead">For students whose missed work block could turn several assignments into one late night.</p>
         <div class="hero-actions">
@@ -178,7 +186,7 @@ function landing(): string {
       </div>
     </section>
     <section class="section" aria-labelledby="receipt-preview-title"><div class="shell preview-grid">
-      <div class="section-intro"><span class="eyebrow">One honest receipt</span><h2 id="receipt-preview-title">See the cost of one miss</h2><p>A revised plan shows what moves. It never hides lost time or cuts an estimate without asking.</p><a href="/planner" data-route>Start with your assignments →</a></div>
+      <div class="section-intro"><span class="eyebrow">Sample reschedule receipt</span><h2 id="receipt-preview-title">Example reschedule receipt</h2><p>A revised plan shows what moves. Estimates change only when you choose a trim.</p><a href="/planner" data-route>Start with your assignments →</a></div>
       <article class="receipt" aria-label="Sample reschedule receipt">
         <div class="receipt-head"><span class="receipt-label">RESCHEDULE / 001</span><span class="status-risk">1 deadline at risk</span></div>
         <div class="receipt-section"><h3>Missed</h3><p>60 minutes of the biology lab discussion.</p></div>
@@ -191,12 +199,12 @@ function landing(): string {
       <div class="how-grid">
         <div class="step"><span class="step-number">01 / ESTIMATE</span><h3>Add the work you can name</h3><p>Enter each task, deadline, time estimate, and estimate confidence.</p></div>
         <div class="step"><span class="step-number">02 / BLOCK</span><h3>Protect time already taken</h3><p>Import an ICS calendar. Class, work, and appointments stay blocked.</p></div>
-        <div class="step"><span class="step-number">03 / RECOVER</span><h3>Mark the block you missed</h3><p>Get a constrained new plan and a receipt you can act on.</p></div>
+        <div class="step"><span class="step-number">03 / RECOVER</span><h3>Mark the block you missed</h3><p>See a new plan that fits your study hours and deadlines at risk.</p></div>
       </div>
     </div></section>
     <section class="section" aria-labelledby="limits-title"><div class="shell policy-grid">
-      <div><span class="eyebrow">Boundaries</span><h2 id="limits-title">Planning, not pretending</h2><p>This tool does not log into your school. It does not forecast grades or write coursework.</p><p>You enter the estimates. The receipt keeps their uncertainty visible.</p></div>
-      <div><span class="eyebrow">Local by default</span><h2>Your calendar stays yours</h2><p>ICS files are read in your browser. Assignment and calendar data stay in this browser unless you export a backup.</p><p><a href="/privacy" data-route>Read the privacy details →</a></p></div>
+      <div><span class="eyebrow">Planning scope</span><h2 id="limits-title">What this planner does</h2><p>Enter estimates, protect busy time, and see what can still fit before each deadline.</p><p>Rough estimates stay marked in a receipt so you can review them.</p></div>
+      <div><span class="eyebrow">Local by default</span><h2>How calendar data is handled</h2><p>ICS files are read in your browser. Assignment and calendar data stay in this browser unless you export a backup.</p><p><a href="/privacy" data-route>Read the privacy details →</a></p></div>
     </div></section>
     ${pricingSection()}
   </main>`, '/');
@@ -204,12 +212,12 @@ function landing(): string {
 
 function pricingSection(): string {
   return `<section class="section" aria-labelledby="price-title"><div class="shell preview-grid">
-    <div><span class="eyebrow">Keep using it</span><h2 id="price-title">Four tasks free. No subscription.</h2><p>The free plan includes the full rescheduler, risk receipt, calendar import, and data export.</p></div>
+    <div><span class="eyebrow">Keep using it</span><h2 id="price-title">Four tasks free.</h2><p>The free plan includes the full rescheduler, risk receipt, calendar import, and data export.</p></div>
     <div class="panel panel-signal"><p class="price">$9 once</p><h3>Unlimited plans and receipt history</h3><p>Buy once to add unlimited active tasks and keep every past receipt.</p>
       <div class="button-row"><a class="button button-primary" href="${checkoutUrl}">Buy the one-time license</a></div>
       <form data-license-form><div class="form-field"><label for="license-token">Have a license? Paste it</label><input id="license-token" name="license" autocomplete="off" required></div><button class="button-quiet" type="submit">Verify my license</button></form>
       ${license.notice ? `<p class="form-error" role="status">${esc(license.notice)} <a href="${checkoutUrl}">Buy a license</a>.</p>` : ''}
-      <p class="field-help">Sociobot is the merchant of record. Refunds are handled there. See <a href="/terms" data-route>terms</a>.</p>
+      <p class="field-help">Checkout opens with Sociobot. See <a href="/terms" data-route>terms</a>.</p>
     </div>
   </div></section>`;
 }
@@ -245,7 +253,7 @@ function receiptCard(receipt: Receipt): string {
     <div class="receipt-head"><span class="receipt-label">RESCHEDULE / ${esc(receipt.id.slice(-6).toUpperCase())}</span><span class="${hasRisk ? 'status-risk' : 'status-safe'}">${hasRisk ? `${receipt.risks.length} deadline${receipt.risks.length === 1 ? '' : 's'} at risk` : 'No deadline at risk'}</span></div>
     <div class="receipt-section"><h2 id="receipt-title">What this miss changes</h2><p><strong>Missed:</strong> ${formatMinutes(receipt.missedMinutes)} of ${esc(receiptTaskTitle(receipt, receipt.missedTaskId))} at ${esc(formatDateTime(receipt.missedStart))}.</p><p><strong>Replacement:</strong> ${esc(receipt.replacement)}</p></div>
     ${receipt.moved.length ? `<div class="receipt-section"><h3>Work that moves</h3><ul>${receipt.moved.map((item) => `<li>${esc(item)}</li>`).join('')}</ul></div>` : `<div class="receipt-section"><h3>Work that moves</h3><p>No other task moved.</p></div>`}
-    <div class="receipt-section"><h3>What stays true</h3><ul>${receipt.kept.map((item) => `<li>${esc(item)}</li>`).join('')}</ul></div>
+    <div class="receipt-section"><h3>What stays true</h3><ul>${receipt.kept.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>${receipt.shorten.length ? '<p class="field-help">Rough estimates are marked below for review.</p>' : ''}</div>
     ${receipt.shorten.filter((item) => canTrim(taskById(item.taskId))).length ? `<div class="receipt-section"><h3>Possible trims</h3><p>These are choices, not automatic cuts.</p>${receipt.shorten.filter((item) => canTrim(taskById(item.taskId))).map((item) => `<div class="data-row"><span>${esc(item.reason)}</span><button type="button" data-action="trim" data-id="${esc(item.taskId)}">Trim 30 min</button></div>`).join('')}</div>` : ''}
     ${hasRisk ? `<div class="receipt-section"><h3>Deadline risk</h3><ul>${receipt.risks.map((risk) => `<li>${esc(receiptTaskTitle(receipt, risk.taskId))} is ${formatMinutes(risk.unscheduledMinutes)} short.</li>`).join('')}</ul></div>` : ''}
     <div class="button-row"><button type="button" data-action="copy-receipt">Copy receipt</button><button type="button" class="button-quiet" data-action="download-receipt">Download receipt</button></div>
@@ -302,7 +310,7 @@ function planner(): string {
 }
 
 function privacy(): string {
-  return shell(`<main id="main"><article class="shell legal"><span class="eyebrow">Policy</span><h1 tabindex="-1">Your plan stays on your device</h1><p>Effective August 28, 2026.</p><h2>What this app stores</h2><p>The app stores assignments, estimates, calendar events, settings, and receipts in this browser. Demo data is isolated and discarded when you leave the demo.</p><h2>What leaves your device</h2><p>Planning data does not leave your device. A license check sends only your license token to the Sociobot billing API. Opening checkout takes you to Sociobot.</p><h2>Your choices</h2><p>You can export a backup from the planner. You can delete assignments or clear site data in your browser.</p><h2>Calendar files</h2><p>ICS files are parsed in your browser. This app does not request school or calendar credentials.</p><h2>Contact</h2><p>Questions can be sent to <a href="mailto:privacy@sociobot.in">privacy@sociobot.in</a>.</p></article></main>`, '/privacy');
+  return shell(`<main id="main"><article class="shell legal"><span class="eyebrow">Policy</span><h1 tabindex="-1">Your plan stays on your device</h1><p>Effective August 28, 2026.</p><h2>What this app stores</h2><p>The app stores assignments, estimates, calendar events, settings, and receipts in this browser. Demo data stays in memory and is discarded when you leave the demo.</p><h2>What leaves your device</h2><p>Planning data stays in this browser. A license check sends its token to the Sociobot billing API. Opening checkout takes you to Sociobot.</p><h2>Your choices</h2><p>You can export a backup from the planner. You can delete assignments or clear site data in your browser.</p><h2>Calendar files</h2><p>ICS files are parsed in your browser.</p><h2>Contact</h2><p>Questions can be sent to <a href="mailto:privacy@sociobot.in">privacy@sociobot.in</a>.</p></article></main>`, '/privacy');
 }
 
 function terms(): string {
@@ -324,7 +332,7 @@ function showToast(message: string): void {
 
 async function persist(): Promise<void> {
   if (demo) return;
-  try { await saveState('real', state); } catch { showToast('This change could not be saved. Export a backup, then check browser storage.'); }
+  try { await saveState(state); } catch { showToast('This change could not be saved. Export a backup, then check browser storage.'); }
 }
 
 function receiptText(receipt: Receipt): string {
@@ -347,7 +355,6 @@ async function handleAction(element: HTMLElement): Promise<void> {
   const action = element.dataset.action;
   const id = element.dataset.id ?? '';
   if (action === 'reset-demo') {
-    await clearState('demo');
     state = makeDemoState();
     render();
     showToast('Demo reset to its starting plan.');
@@ -504,15 +511,27 @@ function updateNetworkBanner(): void {
   if (banner) banner.hidden = navigator.onLine;
 }
 
+function updateMetadata(key: string): void {
+  const item = metadata[key] ?? metadata['/404'];
+  const url = `https://workload-reschedule-receipts.sociobot.in${item.path}`;
+  document.title = titles[key] ?? titles['/404'];
+  document.querySelector('meta[name="description"]')?.setAttribute('content', item.description);
+  document.querySelector('link[rel="canonical"]')?.setAttribute('href', url);
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', document.title);
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', item.description);
+  document.querySelector('meta[property="og:url"]')?.setAttribute('content', url);
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', document.title);
+  document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', item.description);
+}
+
 function render(): void {
   route = window.location.pathname;
   demo = route === '/demo' || new URLSearchParams(window.location.search).get('demo') === '1';
   const known = ['/', '/planner', '/demo', '/privacy', '/terms'];
-  const view = route === '/' ? landing() : route === '/planner' || route === '/demo' ? planner() : route === '/privacy' ? privacy() : route === '/terms' ? terms() : notFound();
+  const view = demo ? planner() : route === '/' ? landing() : route === '/planner' ? planner() : route === '/privacy' ? privacy() : route === '/terms' ? terms() : notFound();
   app.innerHTML = view;
-  const titleKey = known.includes(route) ? route : '/404';
-  document.title = titles[titleKey];
-  document.querySelector('link[rel="canonical"]')?.setAttribute('href', `https://workload-reschedule-receipts.sociobot.in${titleKey === '/404' ? route : titleKey}`);
+  const titleKey = demo ? '/demo' : known.includes(route) ? route : '/404';
+  updateMetadata(titleKey);
   bindEvents();
   updateNetworkBanner();
 }
@@ -521,7 +540,7 @@ async function navigate(path: string): Promise<void> {
   history.pushState({}, '', path);
   const nextDemo = path === '/demo';
   if (nextDemo) state = makeDemoState();
-  else if (path === '/planner' && demo) state = (await loadState('real')) ?? emptyState();
+  else if (path === '/planner' && demo) state = (await loadState()) ?? emptyState();
   window.scrollTo(0, 0);
   render();
   const heading = document.querySelector<HTMLElement>('h1');
@@ -533,14 +552,14 @@ async function navigate(path: string): Promise<void> {
 async function start(): Promise<void> {
   acceptLicenseFromUrl();
   license = cachedLicenseState();
-  state = demo ? makeDemoState() : (await loadState('real')) ?? emptyState();
+  state = demo ? makeDemoState() : (await loadState()) ?? emptyState();
   render();
   void verifyLicense().then((verified) => { license = verified; render(); });
   window.addEventListener('popstate', async () => {
     const wasDemo = demo;
     demo = window.location.pathname === '/demo';
     if (demo) state = makeDemoState();
-    else if (wasDemo) state = (await loadState('real')) ?? emptyState();
+    else if (wasDemo) state = (await loadState()) ?? emptyState();
     render();
     document.querySelector<HTMLElement>('h1')?.focus();
   });

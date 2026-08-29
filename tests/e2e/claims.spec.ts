@@ -52,8 +52,15 @@ test('@claim:data-import imports a valid JSON backup without leaving the current
 });
 
 test('@claim:demo-isolation never writes sample tasks into a real plan', async ({ page }) => {
-  await page.goto('/demo');
+  await page.goto('/?demo=1');
+  await expect(page).toHaveTitle('Demo — Deadline Reality Check');
+  await expect(page.getByLabel('Demo mode')).toBeVisible();
   await expect(page.getByText('Draft biology lab discussion').first()).toBeVisible();
+  await page.getByRole('button', { name: 'Reset demo' }).click();
+  await page.getByRole('button', { name: /^Mark .* missed$/ }).first().click();
+  const databases = await page.evaluate(async () => (await indexedDB.databases()).map((database) => database.name));
+  expect(databases).not.toContain('deadline-reality-check:real');
+  expect(databases).not.toContain('deadline-reality-check:demo');
   await page.getByRole('link', { name: 'Start for real' }).click();
   await expect(page.getByText('0 / 4 free tasks')).toBeVisible();
   await expect(page.getByText('No assignments yet')).toBeVisible();
@@ -69,6 +76,64 @@ test('@claim:local-only makes no cross-origin request in the demo', async ({ pag
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await page.getByRole('button', { name: /^Mark .* missed$/ }).first().click();
   expect(outside).toEqual([]);
+});
+
+test('@claim:manual-estimate-trims changes an estimate only after an explicit trim', async ({ page }) => {
+  await page.goto('/demo');
+  const history = page.locator('.task-item', { hasText: 'Check history essay citations' });
+  await expect(history).toContainText('HIST 118 · 2 hr');
+  await expect(page.getByText('No estimate was cut without your choice.')).toBeVisible();
+  await page.getByRole('button', { name: /^Mark .* missed$/ }).first().click();
+  await expect(history).toContainText('HIST 118 · 2 hr');
+  const trim = page.locator('.data-row', { hasText: 'Check history essay citations' }).getByRole('button', { name: 'Trim 30 min' });
+  await trim.click();
+  await expect(history).toContainText('HIST 118 · 1 hr 30 min');
+});
+
+test('@claim:uncertainty-visible keeps rough estimates visible in the receipt', async ({ page }) => {
+  await page.goto('/demo');
+  await expect(page.locator('.task-item', { hasText: 'Check history essay citations' })).toContainText('rough estimate');
+  await expect(page.getByText('Rough estimates are marked below for review.')).toBeVisible();
+  await expect(page.getByText(/has a rough estimate/).first()).toBeVisible();
+});
+
+test('@claim:indexeddb-storage saves a real plan in its own IndexedDB database', async ({ page }) => {
+  await page.goto('/planner');
+  await page.getByRole('textbox', { name: 'Task' }).fill('IndexedDB practice');
+  await page.getByLabel('Course').fill('DATA 101');
+  await page.getByRole('button', { name: 'Add assignment and plan it' }).click();
+  await expect(page.getByText('IndexedDB practice').first()).toBeVisible();
+  await page.reload();
+  await expect(page.getByText('IndexedDB practice').first()).toBeVisible();
+  const databases = await page.evaluate(async () => (await indexedDB.databases()).map((database) => database.name));
+  expect(databases).toContain('deadline-reality-check:real');
+});
+
+test('@claim:license-token-privacy sends only the license token to Sociobot verification', async ({ page }) => {
+  const requests: Array<{ url: string; method: string; body: string | null }> = [];
+  await page.route('https://api.sociobot.in/**', async (route) => {
+    const request = route.request();
+    requests.push({ url: request.url(), method: request.method(), body: request.postData() });
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ valid: true, reason: 'ok' }) });
+  });
+  await page.goto('/planner?license=private-test-token');
+  await expect(page.getByText('Unlimited license active')).toBeVisible();
+  expect(requests).toHaveLength(1);
+  const request = requests[0];
+  const url = new URL(request.url);
+  expect(url.origin).toBe('https://api.sociobot.in');
+  expect(url.pathname).toBe('/api/v1/products/workload-reschedule-receipts/verify');
+  expect(url.searchParams.get('license')).toBe('private-test-token');
+  expect(request.method).toBe('GET');
+  expect(request.body).toBeNull();
+});
+
+test('@claim:billing-terms names the merchant and points to Sociobot checkout', async ({ page }) => {
+  await page.goto('/terms');
+  await expect(page.getByText('Sociobot and Dodo are the merchant of record.')).toBeVisible();
+  await expect(page.getByText('Their checkout handles payment and refunds.')).toBeVisible();
+  await page.goto('/');
+  await expect(page.getByRole('link', { name: 'Buy the one-time license' })).toHaveAttribute('href', checkoutUrl);
 });
 
 test('@claim:free-core allows four active tasks, releases completed tasks, and explains a fifth active task', async ({ page }) => {
@@ -184,6 +249,26 @@ test('landing and planner have no serious accessibility issues or console errors
   expect(errors).toEqual([]);
 });
 
+test('direct routes set their own title, description, canonical URL, and focused heading', async ({ page }) => {
+  const routes = [
+    ['/planner', 'Planner — Deadline Reality Check', 'https://workload-reschedule-receipts.sociobot.in/planner'],
+    ['/demo', 'Demo — Deadline Reality Check', 'https://workload-reschedule-receipts.sociobot.in/demo'],
+    ['/privacy', 'Privacy — Deadline Reality Check', 'https://workload-reschedule-receipts.sociobot.in/privacy'],
+    ['/terms', 'Terms — Deadline Reality Check', 'https://workload-reschedule-receipts.sociobot.in/terms'],
+  ] as const;
+  for (const [route, title, canonical] of routes) {
+    await page.goto(route);
+    await expect(page).toHaveTitle(title);
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /.+/);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', canonical);
+    await expect(page.locator('h1')).toHaveCount(1);
+  }
+  await page.getByLabel('Main navigation').getByRole('link', { name: 'Privacy' }).click();
+  await expect(page.locator('h1')).toBeFocused();
+  await page.goBack();
+  await expect(page.locator('h1')).toBeFocused();
+});
+
 test('dark routes keep footer text and links readable', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' });
   for (const route of ['/', '/demo', '/planner', '/privacy', '/terms']) {
@@ -219,4 +304,18 @@ test('the static 404 keeps the product shell, dark treatment, and a 44px return 
   const box = await home.boundingBox();
   expect(box?.height).toBeGreaterThanOrEqual(44);
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(17, 24, 21)');
+});
+
+test('the static 404 includes complete route metadata', async ({ page }) => {
+  await page.goto('/404.html');
+  await expect(page).toHaveTitle('Page not found — Deadline Reality Check');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/404\.html$/);
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/icons/apple-touch-icon.png');
+  await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', '/manifest.webmanifest');
+  for (const property of ['og:title', 'og:description', 'og:image']) {
+    await expect(page.locator(`meta[property="${property}"]`)).toHaveCount(1);
+  }
+  for (const name of ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image']) {
+    await expect(page.locator(`meta[name="${name}"]`)).toHaveCount(1);
+  }
 });

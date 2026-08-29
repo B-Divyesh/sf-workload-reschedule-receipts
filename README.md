@@ -2,9 +2,9 @@
 
 Reschedule missed study time and see which deadlines are at risk.
 
-Deadline Reality Check is a local-first planner for students with overlapping assignments. Add task estimates, protect busy time with an ICS calendar, then mark a study block missed. The app proposes a constrained revised plan and produces a plain-language risk receipt.
+Deadline Reality Check keeps a student’s study plan in this browser. Add task estimates, protect busy time with an ICS calendar, then mark a study block missed. See a new plan that fits your study hours and a list of deadlines at risk.
 
-Try the isolated sample at `/demo` or at <https://workload-reschedule-receipts.sociobot.in/demo>.
+Try the isolated sample at [/demo](/demo) or <https://workload-reschedule-receipts.sociobot.in/demo>.
 
 ## What it does
 
@@ -12,18 +12,19 @@ Try the isolated sample at `/demo` or at <https://workload-reschedule-receipts.s
 - Treats imported ICS events as unavailable time.
 - Rebuilds the plan after a missed block.
 - Lists moved work, possible user-approved trims, and deadline shortfalls.
-- Stores real plans in IndexedDB on the current device.
+- Stores real plans in this browser’s IndexedDB database.
+- Keeps demo state in memory, separate from real plans.
 - Exports and imports a JSON backup.
 - Reloads offline after the first online visit.
 
-The free plan supports four active tasks and the complete rescheduling flow. A $9 one-time license adds unlimited active tasks and saved receipt history. Checkout and license verification use the Sociobot billing API; no payment provider is embedded here.
+The free plan supports four active tasks and the complete rescheduling flow. A $9 one-time license adds unlimited active tasks and saved receipt history. Checkout opens with Sociobot.
 
 ## Run locally
 
 Requirements: Node.js 20 or later and npm.
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
@@ -38,15 +39,15 @@ npm test
 npm run build
 ```
 
-`npm test` runs unit tests and browser tests in desktop and 390 px mobile layouts. Claim tests cover demo isolation, local-only planning, ICS import, JSON backup export and import, the active-task limit, checkout routing, receipt creation, and offline reload.
+`npm test` runs unit and browser tests in desktop and 390 px mobile layouts. Claim tests cover the demo, calendar import, backups, storage, privacy, limits, checkout, receipts, and offline reload.
 
 `npm run build` writes the static deployment to `dist/`, with `dist/index.html` at its root.
 
 ## Data and privacy
 
-Real plans use the IndexedDB database `deadline-reality-check:real`. Demo state stays in memory and never enters that database. No analytics, third-party fonts, or runtime content CDNs are used. License verification sends only the pasted license token to `api.sociobot.in`.
+Planning requests stay on this site. License checks send the stored token to the Sociobot billing API. No analytics, third-party fonts, or runtime content CDNs are used.
 
-Read the in-product `/privacy` and `/terms` pages for user-facing details.
+Read the in-product [/privacy](/privacy) and [/terms](/terms) pages for user-facing details.
 
 ## Deploy
 
