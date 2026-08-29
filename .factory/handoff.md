@@ -1,27 +1,69 @@
-# Review 1 handoff — Deadline Reality Check
+# Polish 1 handoff — Deadline Reality Check
 
-## Status
+## Released repair
 
-**FAIL.** This reviewer made no product-code changes. The review is recorded
-in `.factory/review-1.md` and identifies thirteen blocking unlisted public
-claims, five copy-heading issues, one overlong README sentence, and incomplete
-404 metadata.
+- Application repair commit: `2f0b1fa302e7b5f8591b3f14ff95ffaa270ff1e3`.
+- Static deployment: `77cae535-adeb-4445-9f75-67b22a0bcd7f`.
+- Live URL: <https://workload-reschedule-receipts.sociobot.in>.
+- Demo URL: <https://workload-reschedule-receipts.sociobot.in/demo> and
+  <https://workload-reschedule-receipts.sociobot.in/?demo=1>.
 
-## Verification performed
+The repair closes every finding in `.factory/review-1.md`. There were no
+earlier `.factory/review-*.md` or `.factory/polish-*.md` records. Earlier
+verification records were rechecked through the current suite.
 
-- Fresh live first-read checks at 390 × 844 and 1440 × 900.
-- Live demo reset, missed-block, start-for-real isolation, same-origin request
-  log, service-worker offline reload, route/back-focus, link crawl, HTTP 404,
-  cache-header, metadata, and light/dark Axe checks.
-- `npm ci`, all nine declared `npm test -- --grep @claim:<id>` commands,
-  `npm test`, and `npm run build`.
+## What changed
 
-All declared claims passed. The failure is the mandatory claims-manifest
-cross-check: public promises in the landing/README lack matching declared,
-observable tests.
+- `?demo=1` now opens the real demo planner directly, with the persistent
+  banner, reset, and start-for-real actions. Demo state is memory-only; it
+  never opens either demo or real IndexedDB storage.
+- Added seven observable claims and matching tagged browser tests for manual
+  trims, rough-estimate visibility, real IndexedDB persistence, demo storage
+  isolation, license-token routing, and billing terms. Narrowed or removed
+  public promises that could not be proved in the sandbox.
+- Rewrote first-screen, section, and README copy in plain language. The copy
+  audit is at `.factory/copy-audit.md`; the catalog description is verb-first
+  and 66 characters.
+- Route changes now update title, description, canonical URL, Open Graph, and
+  Twitter metadata. The static 404 has complete metadata, app icons, and the
+  manifest.
 
-## Next steps
+## Verification
 
-Implement the concrete claim/test or copy-removal fixes in
-`.factory/review-1.md`, add 404 metadata, then repeat the complete review from
-a fresh browser context and clean dependency install.
+From a clean `npm ci` install:
+
+- `npm test` passed: 7 unit tests and 48 Playwright checks across desktop and
+  mobile Chromium.
+- Every command declared in `.factory/claims.json` passed verbatim, including
+  all 14 `npm test -- --grep @claim:<id>` commands in both browser projects.
+- `npm run build` passed and produced `dist/index.html`. Initial JS is
+  38.79 KB (12.58 KB gzip); CSS is 10.07 KB (3.20 KB gzip); the desktop hero
+  is 26.66 KB.
+- Local `verify-url.sh` passed with no console/page errors, one h1/main,
+  `lang=en`, and zero images without alt text. Local Axe Playwright scans had
+  zero serious or critical violations across `/`, `/demo`, `/planner`,
+  `/privacy`, `/terms`, and 404.
+- Lighthouse local mobile run: Performance 100, Accessibility 100, FCP 1.0 s,
+  LCP 1.5 s, CLS 0.
+- Cold live check in a new browser context passed after deployment: landing
+  title/CTA, `?demo=1` banner/reset/start-for-real flow, empty real planner,
+  no demo IndexedDB database, all primary route titles and h1s, HTTP 404 and
+  its metadata. Live `verify-url.sh` passed with no console errors. Live Axe
+  had zero serious or critical violations on all six routes.
+
+Evidence screenshots: `/tmp/drc-live-final-3/landing-mobile.png` and
+`/tmp/drc-live-final-3/404-mobile.png`; local desktop and mobile captures are
+at `/tmp/drc-verify-final-2/`.
+
+## Run and deploy
+
+```sh
+npm ci
+npm test
+npm run build
+/opt/fleet/lib/deploy-static.sh workload-reschedule-receipts /work/repo/dist
+```
+
+## Known gaps
+
+None.
