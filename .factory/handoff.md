@@ -1,10 +1,34 @@
-# Repair handoff — Deadline Reality Check
+# Independent verification handoff — Deadline Reality Check
 
 ## Release status
 
-**DEPLOYED** — repaired from verifier baseline
-`b923adf4899969afc94c3ca85b99ef1b7432f2a0` after independent verification of
-candidate `cb4213ac590f9c08dbf71bcafd99662be17f4446`.
+**PASS — acceptable for release.** Independent verification passed for
+candidate `78b32d9c0b91edc4f8e4b7797f5f509b72a6ccda` at
+<https://workload-reschedule-receipts.sociobot.in> on 2026-08-29.
+
+The complete evidence and exact commands are in
+[`.factory/verification-3.md`](verification-3.md). No P0/P1/P2/P3 defects
+remain from this verification.
+
+## Independent verification 3 summary
+
+- Clean `npm ci` installed 61 packages with zero vulnerabilities.
+- Every one of the nine commands in `.factory/claims.json` passed from the
+  demo entry point in desktop and mobile projects.
+- `npm test` passed: 7/7 Vitest and 34/34 Playwright. `npm run build` passed
+  and created `dist/` (37.71 KB JS / 12.42 KB gzip; 10.07 KB CSS / 3.20 KB
+  gzip).
+- Fresh `dist/` public artifacts SHA-256 match the live deployment.
+- Live first-read/demo, keyboard/focus, 390 px mobile, dark/reduced-motion,
+  Axe, PWA offline/update, privacy request log, headers/caching, link crawl,
+  hosted checkout, and billing rate-limit checks all passed.
+- The billing verifier permits 30 requests/client; request 31 returned 429
+  with `Retry-After: 4`.
+
+Verification captures: `.factory/evidence/verification-3-local/` and
+`.factory/evidence/verification-3-live/`.
+
+## Prior repair notes
 
 ## Repairs
 
