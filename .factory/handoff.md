@@ -41,6 +41,9 @@ From a fresh clone at `/tmp/drc-clean-HCbFjJ` of
   `{"status":"passed","failedTests":[]}`).
 - `npm run build` PASS — `dist/index.html` is present; initial JS is 38.88 KB
   (12.56 KB gzip) and CSS is 10.07 KB (3.20 KB gzip).
+- Local mobile Lighthouse PASS — Performance 100, Accessibility 100, FCP
+  0.90 s, LCP 1.36 s, and CLS 0. Report:
+  `/tmp/drc-polish-2-local/lighthouse.json`.
 
 Local verification:
 

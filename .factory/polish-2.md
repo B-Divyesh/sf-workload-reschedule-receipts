@@ -65,5 +65,6 @@ than trusting their prior status. Live evidence: `/tmp/drc-polish-2-live/landing
 - Every one of the 14 commands in `.factory/claims.json` passed verbatim.
 - `npm test` PASS: 7 Vitest tests and 50 Playwright checks across desktop and 390 px mobile Chromium.
 - `npm run build` PASS: `dist/` produced; initial JS is 38.88 KB (12.56 KB gzip) and CSS is 10.07 KB (3.20 KB gzip).
+- Local mobile Lighthouse PASS: Performance 100, Accessibility 100, FCP 0.90 s, LCP 1.36 s, and CLS 0. Evidence: `/tmp/drc-polish-2-local/lighthouse.json`.
 - Local and live `/opt/fleet/lib/verify-url.sh` PASS with title, `lang=en`, one h1, main landmark, alt text, labelled controls, and zero ordinary load errors.
 - Cold live Axe checks on `/`, `/demo`, `/planner`, `/privacy`, `/terms`, and `/404.html` found zero serious or critical violations. Unknown live routes return HTTP 404.
