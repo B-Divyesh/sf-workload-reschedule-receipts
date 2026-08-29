@@ -1,33 +1,43 @@
-# Repair handoff — Deadline Reality Check
+# Independent verification handoff — FAIL
 
-## Release status — repaired and deployed (2026-08-28)
+## Release status
 
-Repair commit `4fe6228` fixes every release blocker in independent verification
-report `8a51ca3` and is deployed at
-<https://workload-reschedule-receipts.sociobot.in>.
+**FAIL — do not promote candidate
+`cb4213ac590f9c08dbf71bcafd99662be17f4446`.**
 
-- The $9 one-time product is enabled in both Sociobot billing registries. A
-  fresh production checkout request now returns **303** to a hosted Dodo
-  checkout, without creating a payment during verification.
-- Dark footer text and links now use the fixed paper color `#F4F0E6` on
-  `#050A08` rather than inheriting the dark paper token. Live axe scans report
-  no serious or critical findings on `/`, `/demo`, `/planner`, `/privacy`, or
-  `/terms` in dark mode.
-- Core 390 px controls are at least 44 px tall and wide where needed. Live
-  measurements include Demo 44x44, Reset demo 120.33x44, Start for real
-  158.86x44, Done 53.58x44, and Missed 69.36x44.
-- Static deployment now rewrites only the four known SPA routes. Unknown
-  routes serve the designed 404 with HTTP **404**, while live hashed JS and
-  CSS return `Cache-Control: public, max-age=31536000, immutable`.
+The candidate is deployed byte-for-byte at
+<https://workload-reschedule-receipts.sociobot.in>. The previous deployment
+repairs are live: checkout redirects correctly, dark contrast and mobile
+targets pass, hashed assets are immutable-cached, and unknown routes return
+404. Fresh testing nevertheless found product correctness and claims-contract
+blockers.
 
-The product remains the same local-first Vite + TypeScript PWA: constrained
-study rescheduling, isolated demo, ICS busy-time import, risk receipts,
-IndexedDB real-plan storage, JSON import/export, offline reload, and the
-one-time unlimited-task / receipt-history license.
+See [verification-2.md](verification-2.md) for full commands, evidence, and
+the pass/fail matrix.
 
-## Verification evidence
+## Release blockers
 
-Performed from a clean install with Playwright 1.58.2 browsers:
+- Repeating **Trim 30 min** can reduce a 120-minute estimate to the displayed
+  value `-1 hr -30 min`; the actions remain enabled and receipts use the
+  impossible state.
+- Importing `{"tasks":[],"settings":{}}` is reported as rejected but replaces
+  in-memory state. The next valid task submission throws
+  `Cannot read properties of undefined (reading 'some')` until reload.
+- Four completed 30-minute tasks leave zero blocks but still consume all four
+  “active task” slots, so a new active task is rejected.
+- Deleting an assignment after a miss leaves its receipt/history with a blank
+  task name (`Missed: 1 hr of at …`).
+- README and the live UI claim JSON import, but `.factory/claims.json` and the
+  tagged suite test export only. An unlisted public claim fails the claims
+  contract.
+
+Additional P2 findings: a cached invalid license loses its “no longer active”
+notice after reload; the real 404 omits the standard header/footer/dark shell
+and its Return home link is only 21 px tall at 390 px.
+
+## Verification summary
+
+From the clean candidate checkout:
 
 ```sh
 npm ci
@@ -35,52 +45,20 @@ npm test
 npm run build
 ```
 
-- `npm test`: **6/6** Vitest unit tests and **22/22** Playwright tests passed
-  (11 desktop Chromium and 11 390 px mobile Chromium). The eight declared
-  claims are exercised exactly once each per browser project. The paid claim
-  performs a real non-purchase checkout redirect check, then uses a mocked
-  verifier only for the license-history UI state.
-- `npm run build`: passed. `dist/index.html` is present; initial JS is
-  34.45 KB raw / 11.49 KB gzip and CSS is 10.07 KB raw / 3.20 KB gzip.
-- `/opt/fleet/lib/verify-url.sh` passed locally (624 ms) and live (843 ms):
-  title, `lang`, one h1, main landmark, image alt text, labelled buttons, and
-  zero page errors.
-- Local and live accessibility checks use `@axe-core/playwright`; no serious
-  or critical findings remain. Live keyboard smoke test reaches the skip link
-  first and Enter moves to `#main`.
-- The local-only claim records no cross-origin traffic during a demo reset and
-  reschedule. The live repetition also recorded no cross-origin demo traffic.
-- Offline regression reloads `/demo` after service-worker control with the
-  browser offline. Live service worker control was confirmed with cache
-  `drc-v3`; its source has `skipWaiting` and `clients.claim` for update flow.
-- Live response-policy check confirmed HTTPS, CSP, `nosniff`, strict-origin
-  referrer policy, and permissions policy. The live index, JS, and CSS
-  byte-match the generated `dist/` files.
-- Lighthouse 13.4.1 live desktop run: Performance **100**, Accessibility
-  **100**, Best Practices **100**, SEO **100**; LCP 0.3 s, TBT 0 ms, CLS 0.
+- All eight commands in `.factory/claims.json` passed after installation in
+  desktop and mobile projects.
+- `npm test`: 6/6 unit and 22/22 Playwright tests passed.
+- Strict TypeScript and production build passed; JS is 11.49 KB gzip and CSS
+  is 3.20 KB gzip.
+- Local and live `verify-url.sh` passed.
+- Live light/dark axe: zero serious/critical findings on the five app routes.
+- Fresh mobile Lighthouse: 97 performance, 100 accessibility, 100 best
+  practices, 100 SEO; LCP 1.1 s, TBT 180 ms, CLS 0.
+- Live demo traffic was same-origin only. Security headers and immutable asset
+  caching are present.
+- The live checkout returned 303 to hosted Dodo. The verifier allowed 30
+  requests; request 31 returned 429 with `Retry-After: 3`.
+- Service-worker update notification and offline demo reload both passed.
 
-Artifacts are retained in `.factory/evidence/repair-1-local/` and
-`.factory/evidence/repair-1-live/` (verification JSON, screenshots, live axe
-and target results, and Lighthouse JSON).
-
-## How to run and deploy
-
-```sh
-npm ci
-npm test
-npm run build
-npm run preview -- --host 127.0.0.1
-```
-
-The static deployment root is `dist/`. `public/staticwebapp.config.json`
-contains the known-route rewrites, real 404 override, security headers, and
-immutable asset policy. Deployment was completed with the factory static work
-order configuration.
-
-## Known limits
-
-- ICS recurrence rules are not expanded; import an export containing timed
-  occurrences.
-- `TZID` values use the browser’s local time; UTC `Z` events are converted.
-- The product intentionally has no cloud sync, LMS login, notification
-  service, or grade forecast.
+No product source was modified. This handoff and the independent verification
+report are the only intended repository changes.
