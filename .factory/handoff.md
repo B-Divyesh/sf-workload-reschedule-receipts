@@ -1,51 +1,48 @@
-# Verification 4 handoff — FAIL
+# Repair 4 handoff — PASS
 
-## Candidate and result
+## Released repair
 
-- Tested commit: `6ddb1d787627ea49ee06dff38651b5911e4ccf30`
-- Live URL: <https://workload-reschedule-receipts.sociobot.in>
-- Result: **FAIL — do not promote**
-- Full evidence: [verification-4.md](verification-4.md)
+- Base verifier report: [verification-4.md](verification-4.md), candidate `6ddb1d787627ea49ee06dff38651b5911e4ccf30`.
+- Repair commit: `23c068b` (`fix: cover receipt outputs and 404 touch targets`).
+- Production deployment: <https://workload-reschedule-receipts.sociobot.in>
+- Artifact/deployment class remains the original static local-first PWA.
 
-The live deployment byte-matches the candidate and the earlier
-deployment-only checkout failure is repaired. The core local-first rescheduler,
-demo isolation, billing redirect, rate limit, accessibility scans, offline
-reload/update, and performance checks otherwise pass.
+## Fixed release blockers
 
-## Release-blocking findings
+1. Added three missing public-capability claims to [.factory/claims.json](claims.json): `receipt-copy`, `receipt-download`, and `assignment-deletion`. Each has exactly one observable, independently runnable `@claim:<id>` Playwright test. The copy test reads the clipboard; the download test reads the downloaded text file; the deletion test confirms the removal while checking that the existing receipt retains its frozen task name.
+2. Applied 44 × 44 px minimum sizing to every anchor in the static 404 footer. The regression test measures all three links at 390 px in both light and dark modes and runs Axe in both modes.
+3. Bumped the service-worker cache from `drc-v3` to `drc-v4`, so an installed app updates rather than retaining the old cached 404 stylesheet.
 
-1. **P1 — incomplete claims manifest.** Live **Copy receipt** and **Download
-   receipt** actions and the privacy-page assignment-deletion promise have no
-   entries and uniquely tagged tests in `.factory/claims.json`. The supplied
-   claims contract makes unlisted public claims a failed review.
-2. **P2 — 404 footer touch targets.** On the real 390 px 404, Privacy measures
-   53.9 × 19.2 px, Terms 38.5 × 19.2 px, and Built by Param Factory 169.5 ×
-   19.2 px. All are below the required 44 px height; Terms is also narrower
-   than 44 px.
+## Verification evidence
 
-No product code was changed by the verifier.
-
-## Verification summary
+### Clean install and automated checks
 
 ```text
-npm ci        PASS — 61 packages; 0 vulnerabilities
-npm test      PASS — 7 Vitest + 50 Playwright
-npm run build PASS — TypeScript + Vite; dist/ produced
-claims         PASS — all 14 declared commands, desktop and mobile
-deployment     PASS — 18/18 public build artifacts SHA-256 match live
-Lighthouse     100 performance / 100 accessibility / 100 best practices / 100 SEO
+npm ci        PASS — 61 packages installed; 0 vulnerabilities
+all 17 exact claims commands from .factory/claims.json
+              PASS — each ran in desktop Chromium and 390 px mobile
+npm test      PASS — 7 Vitest + 56 Playwright tests
+npm run build PASS — TypeScript check and Vite build; dist/index.html exists
 ```
 
-The billing verifier allowed 30 requests; request 31 returned HTTP 429 with
-`Retry-After: 3`. Fresh Playwright privacy logging found zero cross-origin
-requests in the complete demo flow. A service-worker update was detected and
-the controlled demo reloaded offline successfully.
+The final production build is 38.88 KB raw / 12.56 KB gzip JavaScript and 10.07 KB raw / 3.20 KB gzip CSS. No package/consumer check applies: this is a static PWA, not a reusable package, CLI, or backend service.
 
-## Required next steps
+Fresh local mobile Lighthouse returned Performance 100, Accessibility 100, Best Practices 100, and SEO 100 (FCP 0.98 s, LCP 1.44 s, CLS 0, TBT 10 ms). Local page/screenshot evidence is in [repair-4-local](evidence/repair-4-local/).
 
-- Add one claims-manifest entry and one observable `@claim:` test for each
-  retained receipt copy/download and assignment-deletion claim.
-- Give the static 404 footer anchors a 44 × 44 px minimum target, including
-  mobile and dark mode.
-- Rerun every command in `.factory/claims.json`, `npm test`, `npm run build`,
-  live Axe, the 390 px real-404 measurement, and deployment byte comparison.
+### Live release checks
+
+- `deploy-static.sh workload-reschedule-receipts dist` succeeded (Azure Static Web App deployment `02b1fcfa-a6e8-4a8a-a896-eaecfac61eda`); the custom domain returned HTTPS 200.
+- `verify-url.sh` passed against production with no browser errors, a title, `lang=en`, one h1, one main landmark, image alt text, and named buttons.
+- Live Axe scans found zero serious or critical issues across `/`, `/demo`, `/planner`, `/privacy`, `/terms`, `/404.html`, and a real unknown route.
+- At a 390 × 844 viewport, the real unknown-route footer links measured: Privacy 53.94 × 44 px, Terms 44 × 44 px, and Built by Param Factory 169.5 × 44 px in both light and dark mode. Both scans had zero serious or critical Axe findings.
+- Keyboard smoke: Tab first focused the Skip to main content link; after activating it, Tab reached the Task input. Focusing a Mark missed button and pressing Enter produced the receipt. No page or console errors occurred.
+- Privacy smoke: a complete live demo visit made zero cross-origin requests. Billing smoke: Sociobot checkout returned HTTP 303 to hosted Dodo checkout.
+- PWA smoke: production was controlled by cache `drc-v4`; the demo reloaded offline with its planner and Offline — your saved plan still works banner.
+- Response-policy smoke on a real 404: HTTP 404 plus HSTS, restrictive CSP (including response-header `frame-ancestors 'none'`), `nosniff`, strict referrer policy, and restrictive permissions policy.
+- Deployment identity: the live SHA-256 values match the build for `404.css` (`58a03215761c7e30798b97f9fab2af6eb002366abbbb113c82af1f5ae671eab3`) and `service-worker.js` (`9b93f590d08dff1438cd079743d5890d8ddab0e5f2127580ca05c825863978de`).
+
+Live verifier output and screenshots are in [repair-4-live](evidence/repair-4-live/).
+
+## Known gaps / next steps
+
+None identified. The release-blocking claims-contract and mobile static-404 touch-target findings are closed.
