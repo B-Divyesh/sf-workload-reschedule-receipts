@@ -1,0 +1,35 @@
+
+> deadline-reality-check@1.0.0 test
+> vitest run && playwright test --grep @claim:manual-estimate-trims
+
+
+ RUN  v3.2.7 /work/repo
+
+ ✓ tests/unit/deployment.test.ts (2 tests) 5ms
+ ✓ tests/unit/claims-manifest.test.ts (2 tests) 44ms
+ ✓ tests/unit/scheduler.test.ts (5 tests) 104ms
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  08:00:02
+   Duration  1.77s (transform 499ms, setup 0ms, collect 707ms, tests 153ms, environment 1ms, prepare 1.22s)
+
+[WebServer] (node:5623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:5654) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:5673) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5673) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/e2e/claims.spec.ts:218:1 › @claim:manual-estimate-trims changes an estimate only after an explicit trim (2.7s)
+  ✓  2 [mobile] › tests/e2e/claims.spec.ts:218:1 › @claim:manual-estimate-trims changes an estimate only after an explicit trim (2.9s)
+
+  2 passed (12.1s)

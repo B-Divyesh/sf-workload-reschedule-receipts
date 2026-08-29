@@ -1,0 +1,35 @@
+
+> deadline-reality-check@1.0.0 test
+> vitest run && playwright test --grep @claim:local-only
+
+
+ RUN  v3.2.7 /work/repo
+
+ ✓ tests/unit/deployment.test.ts (2 tests) 4ms
+ ✓ tests/unit/claims-manifest.test.ts (2 tests) 13ms
+ ✓ tests/unit/scheduler.test.ts (5 tests) 144ms
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  07:58:32
+   Duration  1.83s (transform 480ms, setup 0ms, collect 699ms, tests 161ms, environment 1ms, prepare 1.39s)
+
+[WebServer] (node:3990) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:4021) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:4039) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4039) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/e2e/claims.spec.ts:163:1 › @claim:local-only keeps landing, demo, and real planning traffic on an exact local asset allowlist with no beacons (4.7s)
+  ✓  2 [mobile] › tests/e2e/claims.spec.ts:163:1 › @claim:local-only keeps landing, demo, and real planning traffic on an exact local asset allowlist with no beacons (5.1s)
+
+  2 passed (14.5s)

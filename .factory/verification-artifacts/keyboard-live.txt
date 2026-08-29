@@ -1,0 +1,16 @@
+{
+  "skip": {
+    "text": "Skip to main content",
+    "outline": "rgb(242, 201, 76) solid 3px",
+    "top": 12
+  },
+  "afterSkip": {
+    "id": "",
+    "tag": "BODY"
+  },
+  "missedControl": {
+    "name": "Mark Draft biology lab discussion missed",
+    "outline": "rgb(242, 201, 76) solid 3px"
+  },
+  "receiptChanged": true
+}

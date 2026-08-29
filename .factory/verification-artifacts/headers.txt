@@ -1,0 +1,110 @@
+URL https://workload-reschedule-receipts.sociobot.in/
+HTTP/2 200
+content-type: text/html
+cache-control: public, must-revalidate, max-age=30
+etag: "09909157"
+last-modified: Sat, 29 Aug 2026 07:39:01 GMT
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.sociobot.in
+permissions-policy: camera=(), microphone=(), geolocation=()
+URL https://workload-reschedule-receipts.sociobot.in/demo
+HTTP/2 200
+content-type: text/html
+cache-control: public, must-revalidate, max-age=30
+etag: "09909157"
+last-modified: Sat, 29 Aug 2026 07:39:01 GMT
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.sociobot.in
+permissions-policy: camera=(), microphone=(), geolocation=()
+URL https://workload-reschedule-receipts.sociobot.in/planner
+HTTP/2 200
+content-type: text/html
+cache-control: public, must-revalidate, max-age=30
+etag: "09909157"
+last-modified: Sat, 29 Aug 2026 07:39:01 GMT
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.sociobot.in
+permissions-policy: camera=(), microphone=(), geolocation=()
+URL https://workload-reschedule-receipts.sociobot.in/privacy
+HTTP/2 200
+content-type: text/html
+cache-control: public, must-revalidate, max-age=30
+etag: "09909157"
+last-modified: Sat, 29 Aug 2026 07:39:01 GMT
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.sociobot.in
+permissions-policy: camera=(), microphone=(), geolocation=()
+URL https://workload-reschedule-receipts.sociobot.in/terms
+HTTP/2 200
+content-type: text/html
+cache-control: public, must-revalidate, max-age=30
+etag: "09909157"
+last-modified: Sat, 29 Aug 2026 07:39:01 GMT
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.sociobot.in
+permissions-policy: camera=(), microphone=(), geolocation=()
+URL https://workload-reschedule-receipts.sociobot.in/manifest.webmanifest
+HTTP/2 200
+content-type: application/manifest+json
+cache-control: public, must-revalidate, max-age=30
+etag: "09909157"
+last-modified: Sat, 29 Aug 2026 07:39:01 GMT
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.sociobot.in
+permissions-policy: camera=(), microphone=(), geolocation=()
+URL https://workload-reschedule-receipts.sociobot.in/service-worker.js
+HTTP/2 200
+content-type: text/javascript
+cache-control: public, must-revalidate, max-age=30
+etag: "09909157"
+last-modified: Sat, 29 Aug 2026 07:39:01 GMT
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.sociobot.in
+permissions-policy: camera=(), microphone=(), geolocation=()
+URL https://workload-reschedule-receipts.sociobot.in/assets/index-BP1PtUv1.js
+HTTP/2 200
+content-type: text/javascript
+cache-control: public, max-age=31536000, immutable
+etag: "09909157"
+last-modified: Sat, 29 Aug 2026 07:39:01 GMT
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.sociobot.in
+permissions-policy: camera=(), microphone=(), geolocation=()
+URL https://workload-reschedule-receipts.sociobot.in/assets/index-CUqIz0lL.css
+HTTP/2 200
+content-type: text/css
+cache-control: public, max-age=31536000, immutable
+etag: "09909157"
+last-modified: Sat, 29 Aug 2026 07:39:01 GMT
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.sociobot.in
+permissions-policy: camera=(), microphone=(), geolocation=()
+URL https://workload-reschedule-receipts.sociobot.in/does-not-exist-verify6
+HTTP/2 404
+content-type: text/html
+cache-control: public, must-revalidate, max-age=30
+etag: "09909157"
+last-modified: Sat, 29 Aug 2026 07:39:01 GMT
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.sociobot.in
+permissions-policy: camera=(), microphone=(), geolocation=()

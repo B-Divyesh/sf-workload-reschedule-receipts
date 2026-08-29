@@ -1,0 +1,14 @@
+{
+  "url": "https://workload-reschedule-receipts.sociobot.in",
+  "loadMs": 700,
+  "errors": [],
+  "a11y": {
+    "title": "Deadline Reality Check — Reschedule missed work",
+    "lang": "en",
+    "h1": 1,
+    "main": true,
+    "imgsMissingAlt": 0,
+    "buttonsUnlabeled": 0,
+    "textLength": 2163
+  }
+}

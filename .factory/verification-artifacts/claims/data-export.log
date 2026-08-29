@@ -1,0 +1,35 @@
+
+> deadline-reality-check@1.0.0 test
+> vitest run && playwright test --grep @claim:data-export
+
+
+ RUN  v3.2.7 /work/repo
+
+ ✓ tests/unit/claims-manifest.test.ts (2 tests) 47ms
+ ✓ tests/unit/deployment.test.ts (2 tests) 45ms
+ ✓ tests/unit/scheduler.test.ts (5 tests) 144ms
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  07:57:40
+   Duration  2.05s (transform 391ms, setup 0ms, collect 721ms, tests 237ms, environment 1ms, prepare 1.18s)
+
+[WebServer] (node:2755) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:2786) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:2804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2806) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2806) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 [chromium] › tests/e2e/claims.spec.ts:98:1 › @claim:data-export exports a readable JSON backup (1.9s)
+  ✓  1 [mobile] › tests/e2e/claims.spec.ts:98:1 › @claim:data-export exports a readable JSON backup (2.2s)
+
+  2 passed (11.5s)

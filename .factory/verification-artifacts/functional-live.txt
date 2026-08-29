@@ -1,0 +1,31 @@
+{
+  "demo": {
+    "url": "https://workload-reschedule-receipts.sociobot.in/?demo=1",
+    "tasks": 4,
+    "blocks": 11,
+    "receipt": true
+  },
+  "real": {
+    "url": "https://workload-reschedule-receipts.sociobot.in/planner",
+    "tasksAtStart": 0,
+    "emptyError": "Add an assignment, course, and valid deadline.",
+    "pastError": "The deadline has passed. Choose a future time.",
+    "validAssignment": true,
+    "invalidIcs": "This file is not a calendar (.ics) file. Choose an exported .ics file.",
+    "validIcs": true,
+    "invalidBackup": "This backup could not be read. Your current plan was not changed. Choose a JSON export from this app.",
+    "planPreserved": true,
+    "export": {
+      "filename": "deadline-reality-check-backup.json",
+      "tasks": 1,
+      "busyEvents": 2
+    }
+  },
+  "network": {
+    "origins": [
+      "https://workload-reschedule-receipts.sociobot.in"
+    ],
+    "crossOrigin": []
+  },
+  "errors": []
+}

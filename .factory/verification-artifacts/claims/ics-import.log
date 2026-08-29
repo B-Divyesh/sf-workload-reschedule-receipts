@@ -1,0 +1,35 @@
+
+> deadline-reality-check@1.0.0 test
+> vitest run && playwright test --grep @claim:ics-import
+
+
+ RUN  v3.2.7 /work/repo
+
+ ✓ tests/unit/deployment.test.ts (2 tests) 4ms
+ ✓ tests/unit/claims-manifest.test.ts (2 tests) 71ms
+ ✓ tests/unit/scheduler.test.ts (5 tests) 107ms
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  07:57:21
+   Duration  1.85s (transform 634ms, setup 0ms, collect 703ms, tests 182ms, environment 1ms, prepare 1.40s)
+
+[WebServer] (node:2362) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:2394) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:2413) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2413) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/e2e/claims.spec.ts:66:1 › @claim:ics-import imports calendar events and schedules outside both busy ranges (4.0s)
+  ✓  2 [mobile] › tests/e2e/claims.spec.ts:66:1 › @claim:ics-import imports calendar events and schedules outside both busy ranges (4.5s)
+
+  2 passed (14.1s)

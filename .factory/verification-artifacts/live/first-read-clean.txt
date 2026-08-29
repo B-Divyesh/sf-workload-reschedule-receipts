@@ -1,0 +1,16 @@
+{
+  "status": 200,
+  "title": "Deadline Reality Check — Reschedule missed work",
+  "h1": "Reschedule missed study time",
+  "lead": "For students whose missed work block could turn several assignments into one late night.",
+  "sampleVisible": true,
+  "sampleNext": "A missed block, revised plan, and deadlines at risk load next.",
+  "facts": [],
+  "errors": [],
+  "requests": [
+    "https://workload-reschedule-receipts.sociobot.in/",
+    "https://workload-reschedule-receipts.sociobot.in/assets/index-BP1PtUv1.js",
+    "https://workload-reschedule-receipts.sociobot.in/assets/index-CUqIz0lL.css",
+    "https://workload-reschedule-receipts.sociobot.in/assets/hero-plan-1200.webp"
+  ]
+}

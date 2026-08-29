@@ -1,0 +1,35 @@
+
+> deadline-reality-check@1.0.0 test
+> vitest run && playwright test --grep @claim:receipt-download
+
+
+ RUN  v3.2.7 /work/repo
+
+ ✓ tests/unit/deployment.test.ts (2 tests) 3ms
+ ✓ tests/unit/claims-manifest.test.ts (2 tests) 12ms
+ ✓ tests/unit/scheduler.test.ts (5 tests) 101ms
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  07:56:49
+   Duration  1.79s (transform 570ms, setup 0ms, collect 741ms, tests 117ms, environment 1ms, prepare 1.38s)
+
+[WebServer] (node:1545) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:1576) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:1595) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1595) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 [chromium] › tests/e2e/claims.spec.ts:52:1 › @claim:receipt-download downloads the current receipt as a text file (2.0s)
+  ✓  1 [mobile] › tests/e2e/claims.spec.ts:52:1 › @claim:receipt-download downloads the current receipt as a text file (2.2s)
+
+  2 passed (11.4s)

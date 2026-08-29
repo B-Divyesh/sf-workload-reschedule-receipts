@@ -1,0 +1,30 @@
+
+Running 5 tests using 2 workers
+
+(node:10696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10695) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10695) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/e2e/claims.spec.ts:281:1 › @claim:free-core allows four active assignments, releases completed assignments, and explains a fifth active assignment (9.8s)
+  ✓  2 [chromium] › tests/e2e/claims.spec.ts:281:1 › @claim:free-core allows four active assignments, releases completed assignments, and explains a fifth active assignment (10.3s)
+(node:10847) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10847) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 [chromium] › tests/e2e/claims.spec.ts:281:1 › @claim:free-core allows four active assignments, releases completed assignments, and explains a fifth active assignment (10.7s)
+  ✓  4 [chromium] › tests/e2e/claims.spec.ts:281:1 › @claim:free-core allows four active assignments, releases completed assignments, and explains a fifth active assignment (10.2s)
+(node:10990) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10990) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 [chromium] › tests/e2e/claims.spec.ts:281:1 › @claim:free-core allows four active assignments, releases completed assignments, and explains a fifth active assignment (5.0s)
+
+  5 passed (36.9s)

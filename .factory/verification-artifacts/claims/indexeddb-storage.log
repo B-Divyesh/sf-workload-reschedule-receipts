@@ -1,0 +1,35 @@
+
+> deadline-reality-check@1.0.0 test
+> vitest run && playwright test --grep @claim:indexeddb-storage
+
+
+ RUN  v3.2.7 /work/repo
+
+ ✓ tests/unit/claims-manifest.test.ts (2 tests) 40ms
+ ✓ tests/unit/deployment.test.ts (2 tests) 5ms
+ ✓ tests/unit/scheduler.test.ts (5 tests) 92ms
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  08:00:34
+   Duration  1.70s (transform 462ms, setup 0ms, collect 575ms, tests 137ms, environment 1ms, prepare 1.36s)
+
+[WebServer] (node:6434) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:6465) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:6483) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6484) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6484) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6483) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [mobile] › tests/e2e/claims.spec.ts:237:1 › @claim:indexeddb-storage saves a real plan in its own IndexedDB database (3.5s)
+  ✓  2 [chromium] › tests/e2e/claims.spec.ts:237:1 › @claim:indexeddb-storage saves a real plan in its own IndexedDB database (3.4s)
+
+  2 passed (13.1s)

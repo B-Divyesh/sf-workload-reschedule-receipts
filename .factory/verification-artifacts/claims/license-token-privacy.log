@@ -1,0 +1,35 @@
+
+> deadline-reality-check@1.0.0 test
+> vitest run && playwright test --grep @claim:license-token-privacy
+
+
+ RUN  v3.2.7 /work/repo
+
+ ✓ tests/unit/deployment.test.ts (2 tests) 4ms
+ ✓ tests/unit/claims-manifest.test.ts (2 tests) 12ms
+ ✓ tests/unit/scheduler.test.ts (5 tests) 146ms
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  08:00:52
+   Duration  1.72s (transform 412ms, setup 0ms, collect 615ms, tests 163ms, environment 1ms, prepare 1.34s)
+
+[WebServer] (node:6828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:6859) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:6877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6878) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6878) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/e2e/claims.spec.ts:249:1 › @claim:license-token-privacy sends only the license token to Sociobot verification (1.8s)
+  ✓  2 [mobile] › tests/e2e/claims.spec.ts:249:1 › @claim:license-token-privacy sends only the license token to Sociobot verification (1.6s)
+
+  2 passed (11.4s)

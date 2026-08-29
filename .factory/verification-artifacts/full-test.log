@@ -1,0 +1,103 @@
+
+> deadline-reality-check@1.0.0 test
+> vitest run && playwright test
+
+
+ RUN  v3.2.7 /work/repo
+
+ ✓ tests/unit/claims-manifest.test.ts (2 tests) 43ms
+ ✓ tests/unit/deployment.test.ts (2 tests) 44ms
+ ✓ tests/unit/scheduler.test.ts (5 tests) 60ms
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  08:02:11
+   Duration  1.70s (transform 425ms, setup 0ms, collect 620ms, tests 147ms, environment 1ms, prepare 1.39s)
+
+[WebServer] (node:7868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:7899) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 62 tests using 2 workers
+
+(node:7917) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7918) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7917) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7918) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   2 [chromium] › tests/e2e/claims.spec.ts:42:1 › @claim:receipt-copy copies the current receipt to the clipboard (2.2s)
+  ✓   1 [chromium] › tests/e2e/claims.spec.ts:7:1 › @claim:reschedule-receipt turns a missed block into a revised plan and receipt (3.1s)
+  ✓   3 [chromium] › tests/e2e/claims.spec.ts:52:1 › @claim:receipt-download downloads the current receipt as a text file (1.8s)
+  ✓   5 [chromium] › tests/e2e/claims.spec.ts:98:1 › @claim:data-export exports a readable JSON backup (2.1s)
+  ✓   4 [chromium] › tests/e2e/claims.spec.ts:66:1 › @claim:ics-import imports calendar events and schedules outside both busy ranges (4.0s)
+  ✓   7 [chromium] › tests/e2e/claims.spec.ts:148:1 › @claim:demo-isolation never writes sample assignments into a real plan (3.1s)
+  ✓   6 [chromium] › tests/e2e/claims.spec.ts:110:1 › @claim:data-import restores distinctive assignments, calendar data, settings, and a receipt into an empty real plan (5.0s)
+  ✓   9 [chromium] › tests/e2e/claims.spec.ts:218:1 › @claim:manual-estimate-trims changes an estimate only after an explicit trim (2.5s)
+  ✓  10 [chromium] › tests/e2e/claims.spec.ts:230:1 › @claim:uncertainty-visible keeps rough estimates visible in the receipt (2.0s)
+  ✓   8 [chromium] › tests/e2e/claims.spec.ts:163:1 › @claim:local-only keeps landing, demo, and real planning traffic on an exact local asset allowlist with no beacons (5.7s)
+  ✓  12 [chromium] › tests/e2e/claims.spec.ts:249:1 › @claim:license-token-privacy sends only the license token to Sociobot verification (1.5s)
+  ✓  11 [chromium] › tests/e2e/claims.spec.ts:237:1 › @claim:indexeddb-storage saves a real plan in its own IndexedDB database (3.1s)
+  ✓  13 [chromium] › tests/e2e/claims.spec.ts:268:1 › @claim:billing-terms proves Sociobot checkout redirects to Dodo (2.7s)
+  ✓  14 [chromium] › tests/e2e/claims.spec.ts:281:1 › @claim:free-core allows four active assignments, releases completed assignments, and explains a fifth active assignment (8.6s)
+  ✓  15 [chromium] › tests/e2e/claims.spec.ts:308:1 › @claim:paid-checkout shows the exact price, plans five active assignments, and keeps paid receipt history (7.7s)
+  ✓  16 [chromium] › tests/e2e/claims.spec.ts:336:1 › @claim:offline-reload reloads the demo without a network (2.0s)
+  ✓  17 [chromium] › tests/e2e/claims.spec.ts:356:1 › rejected backups leave the running planner valid (3.0s)
+  ✓  18 [chromium] › tests/e2e/claims.spec.ts:370:1 › trims stop before an estimate becomes negative (2.9s)
+  ✓  19 [chromium] › tests/e2e/claims.spec.ts:379:1 › @claim:assignment-deletion deletes an assignment while preserving its existing receipt name (1.7s)
+  ✓  20 [chromium] › tests/e2e/claims.spec.ts:388:1 › a cached invalid license keeps its inactive notice after reload (1.7s)
+  ✓  22 [chromium] › tests/e2e/claims.spec.ts:409:1 › direct routes set their own title, description, canonical URL, focused heading, and route announcement (3.8s)
+  ✓  23 [chromium] › tests/e2e/claims.spec.ts:438:1 › the first screen uses plain action, calendar, and pricing language (1.4s)
+  ✓  24 [chromium] › tests/e2e/claims.spec.ts:451:1 › the first-screen sample action opens the isolated query demo with reset and a clean exit (2.4s)
+  ✓  21 [chromium] › tests/e2e/claims.spec.ts:396:1 › all supported routes have no Axe violations or console errors (18.7s)
+  ✓  26 [chromium] › tests/e2e/claims.spec.ts:477:1 › 390px core controls retain 44px touch targets (3.3s)
+  ✓  27 [chromium] › tests/e2e/claims.spec.ts:489:1 › the static 404 keeps the product shell, dark treatment, and a 44px return action (697ms)
+  ✓  25 [chromium] › tests/e2e/claims.spec.ts:465:1 › dark routes keep footer text and links readable (14.5s)
+  ✓  29 [chromium] › tests/e2e/claims.spec.ts:520:1 › the static 404 includes complete route metadata (975ms)
+  ✓  30 [chromium] › tests/e2e/claims.spec.ts:534:1 › legal links open real routes with route titles and page-naming headings (2.4s)
+  ✓  28 [chromium] › tests/e2e/claims.spec.ts:502:1 › the static 404 footer links are 44px touch targets in light and dark mode at 390px (5.6s)
+(node:8535) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  31 [chromium] › tests/e2e/claims.spec.ts:549:1 › 390px routes avoid horizontal overflow and keep the demo controls usable (3.1s)
+(node:8543) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8535) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8543) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  32 [mobile] › tests/e2e/claims.spec.ts:7:1 › @claim:reschedule-receipt turns a missed block into a revised plan and receipt (2.9s)
+  ✓  33 [mobile] › tests/e2e/claims.spec.ts:42:1 › @claim:receipt-copy copies the current receipt to the clipboard (2.3s)
+  ✓  34 [mobile] › tests/e2e/claims.spec.ts:52:1 › @claim:receipt-download downloads the current receipt as a text file (1.8s)
+  ✓  36 [mobile] › tests/e2e/claims.spec.ts:98:1 › @claim:data-export exports a readable JSON backup (1.9s)
+  ✓  35 [mobile] › tests/e2e/claims.spec.ts:66:1 › @claim:ics-import imports calendar events and schedules outside both busy ranges (4.5s)
+  ✓  37 [mobile] › tests/e2e/claims.spec.ts:110:1 › @claim:data-import restores distinctive assignments, calendar data, settings, and a receipt into an empty real plan (4.0s)
+  ✓  38 [mobile] › tests/e2e/claims.spec.ts:148:1 › @claim:demo-isolation never writes sample assignments into a real plan (2.7s)
+  ✓  40 [mobile] › tests/e2e/claims.spec.ts:218:1 › @claim:manual-estimate-trims changes an estimate only after an explicit trim (2.1s)
+  ✓  41 [mobile] › tests/e2e/claims.spec.ts:230:1 › @claim:uncertainty-visible keeps rough estimates visible in the receipt (1.3s)
+  ✓  39 [mobile] › tests/e2e/claims.spec.ts:163:1 › @claim:local-only keeps landing, demo, and real planning traffic on an exact local asset allowlist with no beacons (5.0s)
+  ✓  43 [mobile] › tests/e2e/claims.spec.ts:249:1 › @claim:license-token-privacy sends only the license token to Sociobot verification (1.2s)
+  ✓  42 [mobile] › tests/e2e/claims.spec.ts:237:1 › @claim:indexeddb-storage saves a real plan in its own IndexedDB database (3.0s)
+  ✓  44 [mobile] › tests/e2e/claims.spec.ts:268:1 › @claim:billing-terms proves Sociobot checkout redirects to Dodo (2.0s)
+  ✓  46 [mobile] › tests/e2e/claims.spec.ts:308:1 › @claim:paid-checkout shows the exact price, plans five active assignments, and keeps paid receipt history (10.5s)
+  ✓  45 [mobile] › tests/e2e/claims.spec.ts:281:1 › @claim:free-core allows four active assignments, releases completed assignments, and explains a fifth active assignment (12.7s)
+  ✓  47 [mobile] › tests/e2e/claims.spec.ts:336:1 › @claim:offline-reload reloads the demo without a network (2.1s)
+  ✓  48 [mobile] › tests/e2e/claims.spec.ts:356:1 › rejected backups leave the running planner valid (2.5s)
+  ✓  49 [mobile] › tests/e2e/claims.spec.ts:370:1 › trims stop before an estimate becomes negative (2.2s)
+  ✓  50 [mobile] › tests/e2e/claims.spec.ts:379:1 › @claim:assignment-deletion deletes an assignment while preserving its existing receipt name (2.2s)
+  ✓  51 [mobile] › tests/e2e/claims.spec.ts:388:1 › a cached invalid license keeps its inactive notice after reload (2.2s)
+  ✓  53 [mobile] › tests/e2e/claims.spec.ts:409:1 › direct routes set their own title, description, canonical URL, focused heading, and route announcement (3.8s)
+  ✓  54 [mobile] › tests/e2e/claims.spec.ts:438:1 › the first screen uses plain action, calendar, and pricing language (1.6s)
+  ✓  55 [mobile] › tests/e2e/claims.spec.ts:451:1 › the first-screen sample action opens the isolated query demo with reset and a clean exit (2.1s)
+  ✓  52 [mobile] › tests/e2e/claims.spec.ts:396:1 › all supported routes have no Axe violations or console errors (17.6s)
+  ✓  57 [mobile] › tests/e2e/claims.spec.ts:477:1 › 390px core controls retain 44px touch targets (4.1s)
+  ✓  58 [mobile] › tests/e2e/claims.spec.ts:489:1 › the static 404 keeps the product shell, dark treatment, and a 44px return action (997ms)
+  ✓  56 [mobile] › tests/e2e/claims.spec.ts:465:1 › dark routes keep footer text and links readable (15.2s)
+  ✓  60 [mobile] › tests/e2e/claims.spec.ts:520:1 › the static 404 includes complete route metadata (991ms)
+  ✓  61 [mobile] › tests/e2e/claims.spec.ts:534:1 › legal links open real routes with route titles and page-naming headings (2.3s)
+  ✓  59 [mobile] › tests/e2e/claims.spec.ts:502:1 › the static 404 footer links are 44px touch targets in light and dark mode at 390px (5.2s)
+  ✓  62 [mobile] › tests/e2e/claims.spec.ts:549:1 › 390px routes avoid horizontal overflow and keep the demo controls usable (2.3s)
+
+  62 passed (2.3m)

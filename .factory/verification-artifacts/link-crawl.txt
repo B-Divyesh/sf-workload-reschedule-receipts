@@ -1,0 +1,70 @@
+[
+  {
+    "url": "https://api.sociobot.in/api/v1/products/workload-reschedule-receipts/checkout",
+    "status": 303,
+    "location": "https://checkout.dodopayments.com/session/cks_0NmQlzVx7mRdoyw3p8NPv"
+  },
+  {
+    "url": "https://sociobot.in/",
+    "status": 200,
+    "location": null
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/",
+    "status": 200,
+    "location": null
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/#main",
+    "status": "exempt"
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/?demo=1",
+    "status": 200,
+    "location": null
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/demo",
+    "status": 200,
+    "location": null
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/demo#main",
+    "status": "exempt"
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/planner",
+    "status": 200,
+    "location": null
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/planner#main",
+    "status": "exempt"
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/privacy",
+    "status": 200,
+    "location": null
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/privacy#main",
+    "status": "exempt"
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/terms",
+    "status": 200,
+    "location": null
+  },
+  {
+    "url": "https://workload-reschedule-receipts.sociobot.in/terms#main",
+    "status": "exempt"
+  },
+  {
+    "url": "mailto:privacy@sociobot.in",
+    "status": "exempt"
+  },
+  {
+    "url": "mailto:support@sociobot.in",
+    "status": "exempt"
+  }
+]

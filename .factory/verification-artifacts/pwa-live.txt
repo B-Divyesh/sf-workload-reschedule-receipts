@@ -1,0 +1,33 @@
+{
+  "before": {
+    "controller": true,
+    "caches": [
+      "drc-v5"
+    ],
+    "cached": [
+      "https://workload-reschedule-receipts.sociobot.in/index.html",
+      "https://workload-reschedule-receipts.sociobot.in/",
+      "https://workload-reschedule-receipts.sociobot.in/planner",
+      "https://workload-reschedule-receipts.sociobot.in/demo",
+      "https://workload-reschedule-receipts.sociobot.in/manifest.webmanifest",
+      "https://workload-reschedule-receipts.sociobot.in/assets/hero-plan-720.webp",
+      "https://workload-reschedule-receipts.sociobot.in/favicon.svg",
+      "https://workload-reschedule-receipts.sociobot.in/assets/hero-plan-1200.webp",
+      "https://workload-reschedule-receipts.sociobot.in/assets/index-CUqIz0lL.css",
+      "https://workload-reschedule-receipts.sociobot.in/assets/index-BP1PtUv1.js"
+    ]
+  },
+  "update": {
+    "active": "https://workload-reschedule-receipts.sociobot.in/service-worker.js",
+    "waiting": false,
+    "installing": false
+  },
+  "offline": {
+    "responseStatus": 200,
+    "heading": "Reschedule your study plan",
+    "banner": true,
+    "demo": true,
+    "tasks": 4
+  },
+  "errors": []
+}
