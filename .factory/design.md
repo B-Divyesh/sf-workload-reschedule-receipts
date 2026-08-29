@@ -35,7 +35,7 @@ System fonts keep the first load small, work offline, and avoid third-party requ
 - Base rhythm: 8 px; common gaps are 8, 16, 24, 32, 48, 64, and 96 px.
 - Corners are clipped rather than rounded: polygonal corners and square receipt perforations echo cut paper.
 - Landing layout is asymmetric. Copy occupies the left ledger; original geometry occupies and bleeds from the right.
-- The planner becomes two working columns on wide screens and one strict sequence at 390 px: inputs, plan, receipt.
+- The planner becomes two working columns on wide screens. At 390 px, a real plan puts inputs before results; the demo puts its populated receipt first so the value is immediate.
 - Touch targets are at least 44 px. Text measures never exceed 70 characters.
 
 ## Interaction grammar
