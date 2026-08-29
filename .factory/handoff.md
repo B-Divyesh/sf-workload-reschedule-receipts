@@ -2,7 +2,7 @@
 
 ## Release status
 
-**READY FOR DEPLOYMENT** — repaired from verifier baseline
+**DEPLOYED** — repaired from verifier baseline
 `b923adf4899969afc94c3ca85b99ef1b7432f2a0` after independent verification of
 candidate `cb4213ac590f9c08dbf71bcafd99662be17f4446`.
 
@@ -69,18 +69,27 @@ npm run build
   `frame-ancestors` as a response header, `nosniff`, referrer policy, and
   permissions policy.
 
-## Deploy
+## Deployment and live identity
 
-Build output remains the required static PWA artifact in `dist/`; deploy with:
+The static PWA artifact in `dist/` was deployed with:
 
 ```sh
 /opt/fleet/lib/deploy-static.sh workload-reschedule-receipts dist
 ```
 
-After deployment, verify the live build identity against this commit and rerun
-the demo/offline, active-task lifecycle, bad-backup, trim, receipt-deletion,
-invalid-license, and unknown-route checks. No product data leaves the browser
-except a user-supplied license token sent to `api.sociobot.in` for verification.
+Deployment `94560e6a-afb7-4233-9fd9-7c1ecf572850` succeeded to
+`https://workload-reschedule-receipts.sociobot.in` from commit `ea83921`.
+The live `/` HTML and the hashed JS file SHA-256 byte-match this build. Live
+`/` and `/demo` passed `verify-url.sh` with no page/console errors; evidence is
+in `.factory/evidence/repair-2-live/` and
+`.factory/evidence/repair-2-live-demo/`. The unknown route returned HTTP 404
+and, at 390 px dark mode, had the header/footer, correct h1, and a 47.78 px
+Return home action. Live response headers include HTTPS/HSTS, the restrictive
+CSP, `nosniff`, referrer policy, and permissions policy; the hashed JS is
+immutable-cached.
+
+No product data leaves the browser except a user-supplied license token sent
+to `api.sociobot.in` for verification.
 
 ## Known gaps
 
