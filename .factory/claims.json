@@ -7,6 +7,27 @@
     "sandbox": "fresh browser context at /demo; click a sample block and assert a new receipt and revised blocks"
   },
   {
+    "id": "receipt-copy",
+    "claim": "Copies the current reschedule receipt to the clipboard.",
+    "where": "planner receipt",
+    "test": "npm test -- --grep @claim:receipt-copy",
+    "sandbox": "fresh browser context at /demo; copy the sample receipt and assert the clipboard contains its missed work and risk details"
+  },
+  {
+    "id": "receipt-download",
+    "claim": "Downloads the current reschedule receipt as a text file.",
+    "where": "planner receipt",
+    "test": "npm test -- --grep @claim:receipt-download",
+    "sandbox": "fresh browser context at /demo; download the sample receipt and assert the text file name and receipt content"
+  },
+  {
+    "id": "assignment-deletion",
+    "claim": "You can delete assignments from the planner.",
+    "where": "privacy, planner",
+    "test": "npm test -- --grep @claim:assignment-deletion",
+    "sandbox": "fresh browser context at /demo; confirm deletion of a sample assignment and assert it is removed while its existing receipt keeps the assignment name"
+  },
+  {
     "id": "ics-import",
     "claim": "Imports timed events from an ICS calendar as unavailable time.",
     "where": "landing how-it-works, planner, README",

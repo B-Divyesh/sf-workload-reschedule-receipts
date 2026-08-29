@@ -17,6 +17,30 @@ test('@claim:reschedule-receipt turns a missed block into a revised plan and rec
   await expect(page.getByRole('heading', { name: 'What this miss changes' })).toBeVisible();
 });
 
+test('@claim:receipt-copy copies the current receipt to the clipboard', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/demo');
+  await page.getByRole('button', { name: 'Copy receipt' }).click();
+  await expect(page.getByText('Receipt copied.')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toMatch(/DEADLINE REALITY CHECK/);
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toMatch(/Missed: 1 hr of Draft biology lab discussion/);
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toMatch(/Risk:/);
+});
+
+test('@claim:receipt-download downloads the current receipt as a text file', async ({ page }) => {
+  await page.goto('/demo');
+  const downloadEvent = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download receipt' }).click();
+  const download = await downloadEvent;
+  expect(download.suggestedFilename()).toBe('deadline-reality-check.txt');
+  const stream = await download.createReadStream();
+  let body = '';
+  for await (const chunk of stream) body += chunk.toString();
+  expect(body).toMatch(/DEADLINE REALITY CHECK/);
+  expect(body).toMatch(/Missed: 1 hr of Draft biology lab discussion/);
+  expect(body).toMatch(/Risk:/);
+});
+
 test('@claim:ics-import imports local ICS busy time', async ({ page }) => {
   await page.goto('/planner');
   await page.locator('[data-ics-input]').setInputFiles(path.join(import.meta.dirname, '../fixtures/campus-week.ics'));
@@ -223,10 +247,12 @@ test('trims stop before an estimate becomes negative', async ({ page }) => {
   await expect(page.getByText(/-1 hr/)).toHaveCount(0);
 });
 
-test('deleting an assignment preserves the names in its existing receipts', async ({ page }) => {
+test('@claim:assignment-deletion deletes an assignment while preserving its existing receipt name', async ({ page }) => {
   await page.goto('/demo');
   page.once('dialog', (dialog) => dialog.accept());
   await page.getByRole('button', { name: 'Delete Draft biology lab discussion' }).click();
+  await expect(page.getByRole('button', { name: 'Delete Draft biology lab discussion' })).toHaveCount(0);
+  await expect(page.locator('.task-item', { hasText: 'Draft biology lab discussion' })).toHaveCount(0);
   await expect(page.getByText(/Missed:.*Draft biology lab discussion/)).toBeVisible();
 });
 
@@ -316,6 +342,24 @@ test('the static 404 keeps the product shell, dark treatment, and a 44px return 
   const box = await home.boundingBox();
   expect(box?.height).toBeGreaterThanOrEqual(44);
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(17, 24, 21)');
+});
+
+test('the static 404 footer links are 44px touch targets in light and dark mode at 390px', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const colorScheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme });
+    await page.goto('/404.html');
+    const footerLinks = page.locator('.site-footer a');
+    expect(await footerLinks.count()).toBe(3);
+    for (let index = 0; index < await footerLinks.count(); index += 1) {
+      const box = await footerLinks.nth(index).boundingBox();
+      expect(box, `${colorScheme} footer link ${index} should be visible`).not.toBeNull();
+      expect(box!.width, `${colorScheme} footer link ${index} width`).toBeGreaterThanOrEqual(44);
+      expect(box!.height, `${colorScheme} footer link ${index} height`).toBeGreaterThanOrEqual(44);
+    }
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations.filter((item) => ['serious', 'critical'].includes(item.impact ?? ''))).toEqual([]);
+  }
 });
 
 test('the static 404 includes complete route metadata', async ({ page }) => {
