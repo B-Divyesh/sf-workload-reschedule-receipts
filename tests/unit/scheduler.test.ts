@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parseIcs } from '../../src/ics';
-import { buildPlan, defaultSettings, missBlock } from '../../src/scheduler';
+import { buildPlan, defaultSettings, formatMinutes, missBlock } from '../../src/scheduler';
 import type { AppState, StudyTask } from '../../src/types';
 
 const task: StudyTask = {
@@ -26,6 +26,12 @@ describe('scheduler', () => {
     const next = missBlock(state, plan.blocks[0].id, new Date('2030-01-01T08:00:00.000Z'));
     expect(next.receipts).toHaveLength(1);
     expect(next.receipts[0].missedMinutes).toBe(60);
+    expect(next.receipts[0].missedTaskTitle).toBe('Draft lab notes');
+    expect(next.receipts[0].taskTitles['task-1']).toBe('Draft lab notes');
+  });
+
+  it('never formats an impossible negative duration', () => {
+    expect(formatMinutes(-90)).toBe('0 min');
   });
 });
 

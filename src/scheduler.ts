@@ -132,8 +132,9 @@ export function formatDateTime(value: string, includeDate = true): string {
 }
 
 export function formatMinutes(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
+  const safeMinutes = Math.max(0, minutes);
+  const hours = Math.floor(safeMinutes / 60);
+  const mins = safeMinutes % 60;
   if (!hours) return `${mins} min`;
   if (!mins) return `${hours} hr`;
   return `${hours} hr ${mins} min`;
@@ -146,6 +147,8 @@ export function makeReceipt(
   tasks: StudyTask[],
   createdAt = new Date(),
 ): Receipt {
+  const taskTitles = Object.fromEntries(tasks.map((task) => [task.id, task.title]));
+  const missedTaskTitle = taskTitles[missed.taskId] ?? 'Former assignment';
   const replacementBlocks = after.blocks.filter((block) => block.taskId === missed.taskId);
   const firstReplacement = replacementBlocks[0];
   const replacement = firstReplacement
@@ -180,6 +183,8 @@ export function makeReceipt(
     id: uid('receipt'),
     createdAt: createdAt.toISOString(),
     missedTaskId: missed.taskId,
+    missedTaskTitle,
+    taskTitles,
     missedStart: missed.start,
     missedMinutes: missed.minutes,
     replacement,

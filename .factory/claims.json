@@ -21,6 +21,13 @@
     "sandbox": "fresh browser context; download the backup and parse its required arrays"
   },
   {
+    "id": "data-import",
+    "claim": "Imports a JSON backup into the local plan.",
+    "where": "planner, README",
+    "test": "npm test -- --grep @claim:data-import",
+    "sandbox": "fresh browser context; export a plan, import that JSON file, and assert its assignment is restored"
+  },
+  {
     "id": "demo-isolation",
     "claim": "Demo sample data is isolated and is not saved into a real plan.",
     "where": "demo banner, privacy, README",

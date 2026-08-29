@@ -1,43 +1,45 @@
-# Independent verification handoff — FAIL
+# Repair handoff — Deadline Reality Check
 
 ## Release status
 
-**FAIL — do not promote candidate
-`cb4213ac590f9c08dbf71bcafd99662be17f4446`.**
+**READY FOR DEPLOYMENT** — repaired from verifier baseline
+`b923adf4899969afc94c3ca85b99ef1b7432f2a0` after independent verification of
+candidate `cb4213ac590f9c08dbf71bcafd99662be17f4446`.
 
-The candidate is deployed byte-for-byte at
-<https://workload-reschedule-receipts.sociobot.in>. The previous deployment
-repairs are live: checkout redirects correctly, dark contrast and mobile
-targets pass, hashed assets are immutable-cached, and unknown routes return
-404. Fresh testing nevertheless found product correctness and claims-contract
-blockers.
+## Repairs
 
-See [verification-2.md](verification-2.md) for full commands, evidence, and
-the pass/fail matrix.
+- Trim actions now stop while 30 minutes remains, never make an estimate
+  negative, and disappear as soon as no further 30-minute trim is honest.
+- JSON backups are fully validated and normalized before state changes. A
+  rejected file leaves the displayed plan usable and explicitly says so.
+- The free limit counts only unfinished work. Completing all blocks releases
+  those task slots for a new assignment.
+- Receipts now snapshot task titles (including risk labels), so deleting a
+  task cannot damage either the visible receipt, its downloaded text, or paid
+  receipt history. Older valid backups are normalized on import.
+- Added the public `data-import` claim and its tagged browser test. README now
+  names both JSON export and import as tested behavior.
+- Cached invalid licenses retain their required inactive notice after reload.
+- Rebuilt the static 404 with the standard header, navigation, footer,
+  generated-image disclosure, version, dark treatment, skip link, and a
+  44-pixel Return home action.
 
-## Release blockers
+## Exact regression coverage
 
-- Repeating **Trim 30 min** can reduce a 120-minute estimate to the displayed
-  value `-1 hr -30 min`; the actions remain enabled and receipts use the
-  impossible state.
-- Importing `{"tasks":[],"settings":{}}` is reported as rejected but replaces
-  in-memory state. The next valid task submission throws
-  `Cannot read properties of undefined (reading 'some')` until reload.
-- Four completed 30-minute tasks leave zero blocks but still consume all four
-  “active task” slots, so a new active task is rejected.
-- Deleting an assignment after a miss leaves its receipt/history with a blank
-  task name (`Missed: 1 hr of at …`).
-- README and the live UI claim JSON import, but `.factory/claims.json` and the
-  tagged suite test export only. An unlisted public claim fails the claims
-  contract.
+- `trims stop before an estimate becomes negative`
+- `rejected backups leave the running planner valid`
+- `@claim:free-core allows four active tasks, releases completed tasks, and explains a fifth active task`
+- `deleting an assignment preserves the names in its existing receipts`
+- `@claim:data-import imports a valid JSON backup without leaving the current plan`
+- `a cached invalid license keeps its inactive notice after reload`
+- `the static 404 keeps the product shell, dark treatment, and a 44px return action`
 
-Additional P2 findings: a cached invalid license loses its “no longer active”
-notice after reload; the real 404 omits the standard header/footer/dark shell
-and its Return home link is only 21 px tall at 390 px.
+The scheduler unit coverage also asserts receipt label snapshots and clamps an
+impossible negative duration defensively.
 
-## Verification summary
+## Verification performed
 
-From the clean candidate checkout:
+From a clean dependency install:
 
 ```sh
 npm ci
@@ -45,20 +47,42 @@ npm test
 npm run build
 ```
 
-- All eight commands in `.factory/claims.json` passed after installation in
-  desktop and mobile projects.
-- `npm test`: 6/6 unit and 22/22 Playwright tests passed.
-- Strict TypeScript and production build passed; JS is 11.49 KB gzip and CSS
-  is 3.20 KB gzip.
-- Local and live `verify-url.sh` passed.
-- Live light/dark axe: zero serious/critical findings on the five app routes.
-- Fresh mobile Lighthouse: 97 performance, 100 accessibility, 100 best
-  practices, 100 SEO; LCP 1.1 s, TBT 180 ms, CLS 0.
-- Live demo traffic was same-origin only. Security headers and immutable asset
-  caching are present.
-- The live checkout returned 303 to hosted Dodo. The verifier allowed 30
-  requests; request 31 returned 429 with `Retry-After: 3`.
-- Service-worker update notification and offline demo reload both passed.
+- `npm ci`: 61 packages installed, 0 vulnerabilities.
+- `npm test`: **7/7 Vitest** and **34/34 Playwright** tests passed across
+  Desktop Chrome and the 390 px mobile project.
+- Every declared claim command in `.factory/claims.json` was invoked verbatim
+  after the full suite; all nine passed in both browser projects.
+- `npm run build`: strict TypeScript and Vite build passed. `dist/index.html`
+  exists; initial JS is 37.71 KB (12.42 KB gzip) and CSS is 10.07 KB
+  (3.20 KB gzip).
+- Playwright Axe scans found zero serious or critical violations on landing,
+  demo, privacy, and terms in the complete desktop/mobile suite. The suite
+  also exercises keyboard-reachable missed controls, focus-visible behavior,
+  dark mode, 390 px target sizing, offline demo reload, and update-ready PWA
+  behavior.
+- `/opt/fleet/lib/verify-url.sh` passed locally for `/` and `/demo`: route
+  titles, `lang=en`, one h1, main, image alt text, and no browser errors.
+  Evidence is in `.factory/evidence/repair-2-local/` and
+  `.factory/evidence/repair-2-demo/`.
+- Response policy is covered by `tests/unit/deployment.test.ts`; the live
+  pre-deploy response also had HTTPS/HSTS, restrictive CSP with
+  `frame-ancestors` as a response header, `nosniff`, referrer policy, and
+  permissions policy.
 
-No product source was modified. This handoff and the independent verification
-report are the only intended repository changes.
+## Deploy
+
+Build output remains the required static PWA artifact in `dist/`; deploy with:
+
+```sh
+/opt/fleet/lib/deploy-static.sh workload-reschedule-receipts dist
+```
+
+After deployment, verify the live build identity against this commit and rerun
+the demo/offline, active-task lifecycle, bad-backup, trim, receipt-deletion,
+invalid-license, and unknown-route checks. No product data leaves the browser
+except a user-supplied license token sent to `api.sociobot.in` for verification.
+
+## Known gaps
+
+None known. There is no product backend, account system, package consumer, or
+AI feature in scope for this local-first static PWA.

@@ -40,6 +40,9 @@ export interface Receipt {
   id: string;
   createdAt: string;
   missedTaskId: string;
+  /** Keep labels with the record so a receipt still reads truthfully after task deletion. */
+  missedTaskTitle: string;
+  taskTitles: Record<string, string>;
   missedStart: string;
   missedMinutes: number;
   replacement: string;

@@ -52,7 +52,7 @@ export async function verifyLicense(): Promise<LicenseState> {
   if (cached) {
     try {
       const value = JSON.parse(cached) as { checkedAt: number; valid: boolean };
-      if (Date.now() - value.checkedAt < 86_400_000) return { active: value.valid };
+      if (Date.now() - value.checkedAt < 86_400_000) return cachedLicenseState();
     } catch { /* verify below */ }
   }
   try {

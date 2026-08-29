@@ -38,7 +38,7 @@ npm test
 npm run build
 ```
 
-`npm test` runs unit tests and browser tests in desktop and 390 px mobile layouts. Claim tests cover demo isolation, local-only planning, ICS import, JSON export, the free limit, checkout routing, receipt creation, and offline reload.
+`npm test` runs unit tests and browser tests in desktop and 390 px mobile layouts. Claim tests cover demo isolation, local-only planning, ICS import, JSON backup export and import, the active-task limit, checkout routing, receipt creation, and offline reload.
 
 `npm run build` writes the static deployment to `dist/`, with `dist/index.html` at its root.
 

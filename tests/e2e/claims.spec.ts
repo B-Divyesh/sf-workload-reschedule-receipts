@@ -34,6 +34,23 @@ test('@claim:data-export exports a readable JSON backup', async ({ page }) => {
   expect(JSON.parse(body)).toMatchObject({ tasks: [], busyEvents: [], receipts: [] });
 });
 
+test('@claim:data-import imports a valid JSON backup without leaving the current plan', async ({ page }) => {
+  await page.goto('/planner');
+  await page.getByRole('textbox', { name: 'Task' }).fill('Backup practice essay');
+  await page.getByLabel('Course').fill('WRIT 201');
+  await page.getByRole('button', { name: 'Add assignment and plan it' }).click();
+  await page.getByText('Study limits and data').click();
+  const downloadEvent = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export my data' }).click();
+  const download = await downloadEvent;
+  const stream = await download.createReadStream();
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream) chunks.push(chunk as Buffer);
+  await page.locator('[data-import-input]').setInputFiles({ name: 'deadline-reality-check-backup.json', mimeType: 'application/json', buffer: Buffer.concat(chunks) });
+  await expect(page.getByText('Backup imported. Review the rebuilt plan.')).toBeVisible();
+  await expect(page.getByText('Backup practice essay').first()).toBeVisible();
+});
+
 test('@claim:demo-isolation never writes sample tasks into a real plan', async ({ page }) => {
   await page.goto('/demo');
   await expect(page.getByText('Draft biology lab discussion').first()).toBeVisible();
@@ -54,19 +71,31 @@ test('@claim:local-only makes no cross-origin request in the demo', async ({ pag
   expect(outside).toEqual([]);
 });
 
-test('@claim:free-core allows four tasks and explains the fifth', async ({ page }) => {
+test('@claim:free-core allows four active tasks, releases completed tasks, and explains a fifth active task', async ({ page }) => {
   await page.goto('/planner');
   for (let index = 1; index <= 4; index += 1) {
     await page.getByRole('textbox', { name: 'Task' }).fill(`Assignment ${index}`);
     await page.getByLabel('Course').fill('STUDY 101');
+    await page.getByLabel('Time estimate').selectOption('30');
     await page.getByRole('button', { name: 'Add assignment and plan it' }).click();
   }
   await expect(page.getByText('4 / 4 free tasks')).toBeVisible();
   await page.getByRole('textbox', { name: 'Task' }).fill('Assignment 5');
   await page.getByLabel('Course').fill('STUDY 101');
   await page.getByRole('button', { name: 'Add assignment and plan it' }).click();
-  await expect(page.getByText('The free plan holds four active tasks. Remove one or buy the one-time license.')).toBeVisible();
+  await expect(page.getByText('The free plan holds four active tasks. Finish one or buy the one-time license.')).toBeVisible();
   await expect(page.locator('.task-item')).toHaveCount(4);
+  const doneButtons = page.getByRole('button', { name: /^Mark .* done$/ });
+  while (await doneButtons.count()) {
+    const before = await doneButtons.count();
+    await doneButtons.first().click();
+    await expect(doneButtons).toHaveCount(before - 1);
+  }
+  await expect(page.getByText('0 / 4 free tasks')).toBeVisible();
+  await page.getByRole('textbox', { name: 'Task' }).fill('Assignment 5');
+  await page.getByLabel('Course').fill('STUDY 101');
+  await page.getByRole('button', { name: 'Add assignment and plan it' }).click();
+  await expect(page.getByText('Assignment 5').first()).toBeVisible();
 });
 
 test('@claim:paid-checkout shows the exact price, reaches hosted checkout, and enables paid receipt history', async ({ page, request }) => {
@@ -104,6 +133,44 @@ test('@claim:offline-reload reloads the demo without a network', async ({ page, 
   await expect(page.getByText('Offline — your saved plan still works.')).toBeVisible();
 });
 
+test('rejected backups leave the running planner valid', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/planner');
+  await page.getByText('Study limits and data').click();
+  await page.locator('[data-import-input]').setInputFiles({ name: 'incomplete.json', mimeType: 'application/json', buffer: Buffer.from('{"tasks":[],"settings":{}}') });
+  await expect(page.getByText('This backup could not be read. Your current plan was not changed. Choose a JSON export from this app.')).toBeVisible();
+  await page.getByRole('textbox', { name: 'Task' }).fill('Still planning');
+  await page.getByLabel('Course').fill('BIO 204');
+  await page.getByRole('button', { name: 'Add assignment and plan it' }).click();
+  await expect(page.getByText('Still planning').first()).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('trims stop before an estimate becomes negative', async ({ page }) => {
+  await page.goto('/demo');
+  const row = page.locator('.data-row', { hasText: 'Check history essay citations' });
+  for (let index = 0; index < 3; index += 1) await row.getByRole('button', { name: 'Trim 30 min' }).click();
+  await expect(page.getByText(/HIST 118 · 30 min/).first()).toBeVisible();
+  await expect(row.getByRole('button', { name: 'Trim 30 min' })).toHaveCount(0);
+  await expect(page.getByText(/-1 hr/)).toHaveCount(0);
+});
+
+test('deleting an assignment preserves the names in its existing receipts', async ({ page }) => {
+  await page.goto('/demo');
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.getByRole('button', { name: 'Delete Draft biology lab discussion' }).click();
+  await expect(page.getByText(/Missed:.*Draft biology lab discussion/)).toBeVisible();
+});
+
+test('a cached invalid license keeps its inactive notice after reload', async ({ page }) => {
+  await page.route('https://api.sociobot.in/**', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ valid: false, reason: 'invalid' }) }));
+  await page.goto('/demo?license=invalid-license');
+  await expect(page.getByText('This license is no longer active.')).toBeVisible();
+  await page.reload();
+  await expect(page.getByText('This license is no longer active.')).toBeVisible();
+});
+
 test('landing and planner have no serious accessibility issues or console errors', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
@@ -139,4 +206,17 @@ test('390px core controls retain 44px touch targets', async ({ page }) => {
     expect(box!.width, `control ${index} width`).toBeGreaterThanOrEqual(44);
     expect(box!.height, `control ${index} height`).toBeGreaterThanOrEqual(44);
   }
+});
+
+test('the static 404 keeps the product shell, dark treatment, and a 44px return action', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/404.html');
+  await expect(page.locator('header')).toHaveCount(1);
+  await expect(page.locator('footer')).toHaveCount(1);
+  await expect(page.getByRole('heading', { name: 'This page is not in the plan' })).toBeVisible();
+  const home = page.getByRole('link', { name: 'Return home' });
+  const box = await home.boundingBox();
+  expect(box?.height).toBeGreaterThanOrEqual(44);
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(17, 24, 21)');
 });

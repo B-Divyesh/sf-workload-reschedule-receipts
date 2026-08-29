@@ -34,6 +34,90 @@ function taskById(id: string): StudyTask | undefined {
   return state.tasks.find((task) => task.id === id);
 }
 
+function activeTaskCount(tasks = state.tasks): number {
+  return tasks.filter((task) => task.estimateMinutes - task.doneMinutes - task.trimMinutes > 0).length;
+}
+
+function canTrim(task: StudyTask | undefined): boolean {
+  return Boolean(task && task.estimateMinutes - task.doneMinutes - task.trimMinutes >= 60);
+}
+
+function receiptTaskTitle(receipt: Receipt, taskId: string): string {
+  return taskById(taskId)?.title ?? receipt.taskTitles?.[taskId] ?? (receipt.missedTaskId === taskId ? receipt.missedTaskTitle : undefined) ?? 'Former assignment';
+}
+
+function freezeReceiptTaskTitles(receipt: Receipt, tasks = state.tasks): Receipt {
+  const taskTitles = { ...Object.fromEntries(tasks.map((task) => [task.id, task.title])), ...(receipt.taskTitles ?? {}) };
+  return {
+    ...receipt,
+    missedTaskTitle: receipt.missedTaskTitle ?? taskTitles[receipt.missedTaskId] ?? 'Former assignment',
+    taskTitles,
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function isDate(value: unknown): value is string {
+  return typeof value === 'string' && !Number.isNaN(new Date(value).getTime());
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === 'string');
+}
+
+function readBackup(value: unknown): AppState {
+  if (!isRecord(value) || !Array.isArray(value.tasks) || !Array.isArray(value.busyEvents) || !Array.isArray(value.receipts) || !isRecord(value.settings)) {
+    throw new Error('missing plan data');
+  }
+  const settings = value.settings;
+  if (!isFiniteNumber(settings.dayStartHour) || !isFiniteNumber(settings.dayEndHour) || !isFiniteNumber(settings.maxDailyMinutes) || !isFiniteNumber(settings.blockMinutes)
+    || !Number.isInteger(settings.dayStartHour) || !Number.isInteger(settings.dayEndHour) || settings.dayStartHour < 0 || settings.dayEndHour > 23 || settings.dayStartHour >= settings.dayEndHour || settings.maxDailyMinutes <= 0 || settings.blockMinutes <= 0) {
+    throw new Error('invalid settings');
+  }
+  const tasks: StudyTask[] = value.tasks.map((task) => {
+    if (!isRecord(task) || typeof task.id !== 'string' || typeof task.title !== 'string' || typeof task.course !== 'string' || !isDate(task.deadline)
+      || !isFiniteNumber(task.estimateMinutes) || !isFiniteNumber(task.doneMinutes) || !isFiniteNumber(task.trimMinutes)
+      || task.estimateMinutes < 0 || task.doneMinutes < 0 || task.trimMinutes < 0 || task.doneMinutes + task.trimMinutes > task.estimateMinutes
+      || !['rough', 'fair', 'solid'].includes(String(task.confidence)) || !['fixed', 'flexible'].includes(String(task.priority))) throw new Error('invalid task');
+    return task as unknown as StudyTask;
+  });
+  const busyEvents = value.busyEvents.map((event) => {
+    if (!isRecord(event) || typeof event.id !== 'string' || typeof event.title !== 'string' || !isDate(event.start) || !isDate(event.end)
+      || new Date(event.start) >= new Date(event.end) || !['ics', 'manual'].includes(String(event.source))) throw new Error('invalid calendar event');
+    return event as unknown as AppState['busyEvents'][number];
+  });
+  const taskTitles = Object.fromEntries(tasks.map((task) => [task.id, task.title]));
+  const receipts: Receipt[] = value.receipts.map((receipt) => {
+    if (!isRecord(receipt) || typeof receipt.id !== 'string' || typeof receipt.missedTaskId !== 'string' || !isDate(receipt.createdAt) || !isDate(receipt.missedStart)
+      || !isFiniteNumber(receipt.missedMinutes) || receipt.missedMinutes < 0 || typeof receipt.replacement !== 'string' || !isStringArray(receipt.moved) || !isStringArray(receipt.kept)
+      || !Array.isArray(receipt.shorten) || !Array.isArray(receipt.risks)) throw new Error('invalid receipt');
+    if (!receipt.shorten.every((item) => isRecord(item) && typeof item.taskId === 'string' && isFiniteNumber(item.minutes) && item.minutes > 0 && typeof item.reason === 'string')
+      || !receipt.risks.every((risk) => isRecord(risk) && typeof risk.taskId === 'string' && isFiniteNumber(risk.unscheduledMinutes) && risk.unscheduledMinutes >= 0 && isDate(risk.deadline))) throw new Error('invalid receipt detail');
+    const importedTitles = isRecord(receipt.taskTitles) && Object.values(receipt.taskTitles).every((title) => typeof title === 'string') ? receipt.taskTitles as Record<string, string> : {};
+    return {
+      ...receipt as Omit<Receipt, 'missedTaskTitle' | 'taskTitles'>,
+      missedTaskTitle: typeof receipt.missedTaskTitle === 'string' ? receipt.missedTaskTitle : importedTitles[receipt.missedTaskId] ?? taskTitles[receipt.missedTaskId] ?? 'Former assignment',
+      taskTitles: { ...taskTitles, ...importedTitles },
+    };
+  });
+  const plan = buildPlan(tasks, busyEvents, settings as unknown as AppState['settings']);
+  return {
+    tasks,
+    busyEvents,
+    ...plan,
+    receipts,
+    settings: settings as unknown as AppState['settings'],
+    calendarName: typeof value.calendarName === 'string' ? value.calendarName : undefined,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 function formatTime(value: string): string {
   return new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit' }).format(new Date(value));
 }
@@ -156,22 +240,21 @@ function riskList(): string {
 }
 
 function receiptCard(receipt: Receipt): string {
-  const missed = taskById(receipt.missedTaskId);
   const hasRisk = receipt.risks.length > 0;
   return `<article class="receipt" aria-labelledby="receipt-title">
     <div class="receipt-head"><span class="receipt-label">RESCHEDULE / ${esc(receipt.id.slice(-6).toUpperCase())}</span><span class="${hasRisk ? 'status-risk' : 'status-safe'}">${hasRisk ? `${receipt.risks.length} deadline${receipt.risks.length === 1 ? '' : 's'} at risk` : 'No deadline at risk'}</span></div>
-    <div class="receipt-section"><h2 id="receipt-title">What this miss changes</h2><p><strong>Missed:</strong> ${formatMinutes(receipt.missedMinutes)} of ${esc(missed?.title)} at ${esc(formatDateTime(receipt.missedStart))}.</p><p><strong>Replacement:</strong> ${esc(receipt.replacement)}</p></div>
+    <div class="receipt-section"><h2 id="receipt-title">What this miss changes</h2><p><strong>Missed:</strong> ${formatMinutes(receipt.missedMinutes)} of ${esc(receiptTaskTitle(receipt, receipt.missedTaskId))} at ${esc(formatDateTime(receipt.missedStart))}.</p><p><strong>Replacement:</strong> ${esc(receipt.replacement)}</p></div>
     ${receipt.moved.length ? `<div class="receipt-section"><h3>Work that moves</h3><ul>${receipt.moved.map((item) => `<li>${esc(item)}</li>`).join('')}</ul></div>` : `<div class="receipt-section"><h3>Work that moves</h3><p>No other task moved.</p></div>`}
     <div class="receipt-section"><h3>What stays true</h3><ul>${receipt.kept.map((item) => `<li>${esc(item)}</li>`).join('')}</ul></div>
-    ${receipt.shorten.length ? `<div class="receipt-section"><h3>Possible trims</h3><p>These are choices, not automatic cuts.</p>${receipt.shorten.map((item) => `<div class="data-row"><span>${esc(item.reason)}</span><button type="button" data-action="trim" data-id="${esc(item.taskId)}">Trim 30 min</button></div>`).join('')}</div>` : ''}
-    ${hasRisk ? `<div class="receipt-section"><h3>Deadline risk</h3><ul>${receipt.risks.map((risk) => `<li>${esc(taskById(risk.taskId)?.title)} is ${formatMinutes(risk.unscheduledMinutes)} short.</li>`).join('')}</ul></div>` : ''}
+    ${receipt.shorten.filter((item) => canTrim(taskById(item.taskId))).length ? `<div class="receipt-section"><h3>Possible trims</h3><p>These are choices, not automatic cuts.</p>${receipt.shorten.filter((item) => canTrim(taskById(item.taskId))).map((item) => `<div class="data-row"><span>${esc(item.reason)}</span><button type="button" data-action="trim" data-id="${esc(item.taskId)}">Trim 30 min</button></div>`).join('')}</div>` : ''}
+    ${hasRisk ? `<div class="receipt-section"><h3>Deadline risk</h3><ul>${receipt.risks.map((risk) => `<li>${esc(receiptTaskTitle(receipt, risk.taskId))} is ${formatMinutes(risk.unscheduledMinutes)} short.</li>`).join('')}</ul></div>` : ''}
     <div class="button-row"><button type="button" data-action="copy-receipt">Copy receipt</button><button type="button" class="button-quiet" data-action="download-receipt">Download receipt</button></div>
   </article>`;
 }
 
 function receiptHistory(): string {
   if (!license.active || state.receipts.length < 2) return '';
-  return `<section class="panel" aria-labelledby="history-title"><h2 id="history-title">Past receipts</h2><ol class="task-list">${state.receipts.slice(1).map((receipt) => `<li class="task-item"><span><span class="task-title">${esc(taskById(receipt.missedTaskId)?.title)}</span><br><span class="meta">${esc(formatDateTime(receipt.createdAt))} · ${receipt.risks.length ? `${receipt.risks.length} at risk` : 'no deadline at risk'}</span></span></li>`).join('')}</ol></section>`;
+  return `<section class="panel" aria-labelledby="history-title"><h2 id="history-title">Past receipts</h2><ol class="task-list">${state.receipts.slice(1).map((receipt) => `<li class="task-item"><span><span class="task-title">${esc(receiptTaskTitle(receipt, receipt.missedTaskId))}</span><br><span class="meta">${esc(formatDateTime(receipt.createdAt))} · ${receipt.risks.length ? `${receipt.risks.length} at risk` : 'no deadline at risk'}</span></span></li>`).join('')}</ol></section>`;
 }
 
 function taskList(): string {
@@ -188,7 +271,7 @@ function planner(): string {
   nextDeadline.setHours(17, 0, 0, 0);
   const localDeadline = new Date(nextDeadline.getTime() - nextDeadline.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
   return shell(`<main id="main" class="app-page"><div class="shell">
-    <div class="app-heading"><div><span class="eyebrow">Local recovery planner</span><h1 tabindex="-1">Rebuild the plan you have</h1><p class="hero-lead">Add real estimates, protect busy time, then mark the block you missed.</p></div><span class="tag">${license.active ? 'Unlimited license active' : `${state.tasks.length} / 4 free tasks`}</span></div>
+    <div class="app-heading"><div><span class="eyebrow">Local recovery planner</span><h1 tabindex="-1">Rebuild the plan you have</h1><p class="hero-lead">Add real estimates, protect busy time, then mark the block you missed.</p></div><span class="tag">${license.active ? 'Unlimited license active' : `${activeTaskCount()} / 4 free tasks`}</span></div>
     <div class="planner-grid">
       <div>
         <section class="panel" aria-labelledby="add-title"><h2 id="add-title">Add an assignment</h2>
@@ -245,11 +328,10 @@ async function persist(): Promise<void> {
 }
 
 function receiptText(receipt: Receipt): string {
-  const task = taskById(receipt.missedTaskId);
   const risk = receipt.risks.length
-    ? receipt.risks.map((item) => `${taskById(item.taskId)?.title}: ${formatMinutes(item.unscheduledMinutes)} short`).join('\n')
+    ? receipt.risks.map((item) => `${receiptTaskTitle(receipt, item.taskId)}: ${formatMinutes(item.unscheduledMinutes)} short`).join('\n')
     : 'No deadline is at risk.';
-  return `DEADLINE REALITY CHECK\n\nMissed: ${formatMinutes(receipt.missedMinutes)} of ${task?.title}\nReplacement: ${receipt.replacement}\n\nMoved:\n${receipt.moved.join('\n') || 'No other task moved.'}\n\nRisk:\n${risk}\n\nEstimates came from the student.`;
+  return `DEADLINE REALITY CHECK\n\nMissed: ${formatMinutes(receipt.missedMinutes)} of ${receiptTaskTitle(receipt, receipt.missedTaskId)}\nReplacement: ${receipt.replacement}\n\nMoved:\n${receipt.moved.join('\n') || 'No other task moved.'}\n\nRisk:\n${risk}\n\nEstimates came from the student.`;
 }
 
 function download(name: string, content: string, type: string): void {
@@ -286,6 +368,7 @@ async function handleAction(element: HTMLElement): Promise<void> {
   if (action === 'delete-task') {
     const task = taskById(id);
     if (!task || !window.confirm(`Delete “${task.title}” and its study blocks?`)) return;
+    state.receipts = state.receipts.map((receipt) => freezeReceiptTaskTitles(receipt));
     state.tasks = state.tasks.filter((item) => item.id !== id);
     const plan = buildPlan(state.tasks, state.busyEvents, state.settings);
     state = { ...state, ...plan, updatedAt: new Date().toISOString() };
@@ -293,12 +376,24 @@ async function handleAction(element: HTMLElement): Promise<void> {
     render();
   }
   if (action === 'trim') {
-    state.tasks = state.tasks.map((task) => task.id === id ? { ...task, trimMinutes: task.trimMinutes + 30 } : task);
-    const plan = buildPlan(state.tasks, state.busyEvents, state.settings);
-    if (state.receipts[0]) {
-      state.receipts[0] = { ...state.receipts[0], risks: plan.risks, kept: [...state.receipts[0].kept, 'You chose one 30-minute trim.'] };
+    const chosen = taskById(id);
+    if (!canTrim(chosen)) {
+      showToast('This estimate cannot be trimmed further.');
+      return;
     }
-    state = { ...state, ...plan, updatedAt: new Date().toISOString() };
+    const tasks = state.tasks.map((task) => task.id === id
+      ? { ...task, trimMinutes: Math.min(task.trimMinutes + 30, task.estimateMinutes - task.doneMinutes) }
+      : task);
+    const plan = buildPlan(tasks, state.busyEvents, state.settings);
+    if (state.receipts[0]) {
+      state.receipts[0] = {
+        ...state.receipts[0],
+        risks: plan.risks,
+        shorten: state.receipts[0].shorten.filter((item) => canTrim(tasks.find((task) => task.id === item.taskId))),
+        kept: [...state.receipts[0].kept, 'You chose one 30-minute trim.'],
+      };
+    }
+    state = { ...state, tasks, ...plan, updatedAt: new Date().toISOString() };
     await persist();
     render();
     showToast('The chosen estimate was trimmed by 30 minutes.');
@@ -327,7 +422,7 @@ function bindEvents(): void {
     const deadline = new Date(String(data.get('deadline')));
     if (!title || !course || Number.isNaN(deadline.getTime())) formMessage = 'Add a task, course, and valid deadline.';
     else if (deadline <= new Date()) formMessage = 'The deadline has passed. Choose a future time.';
-    else if (!license.active && state.tasks.length >= 4) formMessage = 'The free plan holds four active tasks. Remove one or buy the one-time license.';
+    else if (!license.active && activeTaskCount() >= 4) formMessage = 'The free plan holds four active tasks. Finish one or buy the one-time license.';
     else {
       state.tasks.push({ id: uid('task'), title, course, deadline: deadline.toISOString(), estimateMinutes: Number(data.get('estimate')), doneMinutes: 0, trimMinutes: 0, confidence: data.get('confidence') as StudyTask['confidence'], priority: data.get('priority') as StudyTask['priority'] });
       const plan = buildPlan(state.tasks, state.busyEvents, state.settings);
@@ -382,13 +477,15 @@ function bindEvents(): void {
     const file = importInput.files?.[0];
     if (!file) return;
     try {
-      const value = JSON.parse(await file.text()) as AppState;
-      if (!Array.isArray(value.tasks) || !value.settings) throw new Error('missing plan data');
-      state = { ...value, updatedAt: new Date().toISOString() };
+      const imported = readBackup(JSON.parse(await file.text()));
+      state = imported;
       await persist();
       render();
       showToast('Backup imported. Review the rebuilt plan.');
-    } catch { showToast('This backup could not be read. Choose a JSON export from this app.'); }
+    } catch {
+      importInput.value = '';
+      showToast('This backup could not be read. Your current plan was not changed. Choose a JSON export from this app.');
+    }
   });
 
   document.querySelectorAll<HTMLFormElement>('[data-license-form]').forEach((form) => form.addEventListener('submit', async (event) => {
