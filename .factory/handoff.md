@@ -1,4 +1,43 @@
-# Polish 1 handoff — Deadline Reality Check
+# Review 2 handoff — Deadline Reality Check
+
+## Work completed
+
+- Performed the requested read-only adversarial review against the live site.
+- Wrote `.factory/review-2.md`; no product source or deployment files were
+  changed.
+- Committed the review and this handoff.
+
+## Verification run
+
+- Fresh `npm ci` completed with no vulnerabilities.
+- All 14 commands declared in `.factory/claims.json` passed verbatim.
+- `npm test` passed (7 Vitest and 48 Playwright tests); `npm run build` passed
+  and produced `dist/`.
+- Live fresh-context checks covered desktop and 390 px cold loads, demo/reset/
+  real-plan isolation, same-origin request logging, offline reload, metadata,
+  link crawl, 404, heading focus, and light/dark Axe scans.
+
+## Result and remaining work
+
+**FAIL.** See `.factory/review-2.md` for the four findings. The blocking item
+is a regression/partial closure of F-1-17: visitor-facing `risk receipt`
+jargon remains. The other required repairs are the missing Back/Forward live
+announcement, vague/inconsistent price fact, and unexplained first-use `ICS`.
+
+## How to repeat
+
+```sh
+npm ci
+npm test
+npm run build
+```
+
+Use the live URL and `/demo` for the independent browser checks described in
+the review.
+
+---
+
+# Previous Polish 1 handoff
 
 ## Released repair
 
