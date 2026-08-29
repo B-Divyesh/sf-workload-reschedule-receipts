@@ -1,98 +1,66 @@
-# Review 2 handoff — Deadline Reality Check
-
-## Work completed
-
-- Performed the requested read-only adversarial review against the live site.
-- Wrote `.factory/review-2.md`; no product source or deployment files were
-  changed.
-- Committed the review and this handoff.
-
-## Verification run
-
-- Fresh `npm ci` completed with no vulnerabilities.
-- All 14 commands declared in `.factory/claims.json` passed verbatim.
-- `npm test` passed (7 Vitest and 48 Playwright tests); `npm run build` passed
-  and produced `dist/`.
-- Live fresh-context checks covered desktop and 390 px cold loads, demo/reset/
-  real-plan isolation, same-origin request logging, offline reload, metadata,
-  link crawl, 404, heading focus, and light/dark Axe scans.
-
-## Result and remaining work
-
-**FAIL.** See `.factory/review-2.md` for the four findings. The blocking item
-is a regression/partial closure of F-1-17: visitor-facing `risk receipt`
-jargon remains. The other required repairs are the missing Back/Forward live
-announcement, vague/inconsistent price fact, and unexplained first-use `ICS`.
-
-## How to repeat
-
-```sh
-npm ci
-npm test
-npm run build
-```
-
-Use the live URL and `/demo` for the independent browser checks described in
-the review.
-
----
-
-# Previous Polish 1 handoff
+# Polish 2 handoff — Deadline Reality Check
 
 ## Released repair
 
-- Application repair commit: `2f0b1fa302e7b5f8591b3f14ff95ffaa270ff1e3`.
-- Static deployment: `77cae535-adeb-4445-9f75-67b22a0bcd7f`.
+- Application repair: `7b46c10f75cd16c011838d2abb8a912aa87d8ffa` (`fix: close second adversarial review`).
+- Static deployment: `d83cd692-01e0-4b40-b481-d6111caa2000`.
 - Live URL: <https://workload-reschedule-receipts.sociobot.in>.
 - Demo URL: <https://workload-reschedule-receipts.sociobot.in/demo> and
   <https://workload-reschedule-receipts.sociobot.in/?demo=1>.
 
-The repair closes every finding in `.factory/review-1.md`. There were no
-earlier `.factory/review-*.md` or `.factory/polish-*.md` records. Earlier
-verification records were rechecked through the current suite.
-
 ## What changed
 
-- `?demo=1` now opens the real demo planner directly, with the persistent
-  banner, reset, and start-for-real actions. Demo state is memory-only; it
-  never opens either demo or real IndexedDB storage.
-- Added seven observable claims and matching tagged browser tests for manual
-  trims, rough-estimate visibility, real IndexedDB persistence, demo storage
-  isolation, license-token routing, and billing terms. Narrowed or removed
-  public promises that could not be proved in the sandbox.
-- Rewrote first-screen, section, and README copy in plain language. The copy
-  audit is at `.factory/copy-audit.md`; the catalog description is verb-first
-  and 66 characters.
-- Route changes now update title, description, canonical URL, Open Graph, and
-  Twitter metadata. The static 404 has complete metadata, app icons, and the
-  manifest.
+- Removed the residual `risk receipt` jargon from the first-screen action,
+  paid copy, and public claim. The sample now deterministically exposes a
+  real deadline-risk list, so the promise is observable.
+- Rewrote the mobile first-screen price fact with the real four-active-task
+  free limit and $9 unlimited-active-task entitlement. The paid heading now
+  uses the same entitlement name.
+- Introduced calendar imports in plain words as a “calendar (.ics) file” on
+  landing, README, direct planner entry, and parse errors.
+- Announced Back/Forward route changes through the polite live region after
+  moving focus to the new h1.
+- Expanded the browser regression suite for plain first-screen language,
+  Back announcement, all route Axe scans, and the real deadline-risk list.
+- Updated claims, copy audit, catalog description, and the complete cumulative
+  finding map in `.factory/polish-2.md`.
 
-## Verification
+## Exact verification evidence
 
-From a clean `npm ci` install:
+From a fresh clone at `/tmp/drc-clean-HCbFjJ` of
+`7b46c10f75cd16c011838d2abb8a912aa87d8ffa`:
 
-- `npm test` passed: 7 unit tests and 48 Playwright checks across desktop and
-  mobile Chromium.
-- Every command declared in `.factory/claims.json` passed verbatim, including
-  all 14 `npm test -- --grep @claim:<id>` commands in both browser projects.
-- `npm run build` passed and produced `dist/index.html`. Initial JS is
-  38.79 KB (12.58 KB gzip); CSS is 10.07 KB (3.20 KB gzip); the desktop hero
-  is 26.66 KB.
-- Local `verify-url.sh` passed with no console/page errors, one h1/main,
-  `lang=en`, and zero images without alt text. Local Axe Playwright scans had
-  zero serious or critical violations across `/`, `/demo`, `/planner`,
-  `/privacy`, `/terms`, and 404.
-- Lighthouse local mobile run: Performance 100, Accessibility 100, FCP 1.0 s,
-  LCP 1.5 s, CLS 0.
-- Cold live check in a new browser context passed after deployment: landing
-  title/CTA, `?demo=1` banner/reset/start-for-real flow, empty real planner,
-  no demo IndexedDB database, all primary route titles and h1s, HTTP 404 and
-  its metadata. Live `verify-url.sh` passed with no console errors. Live Axe
-  had zero serious or critical violations on all six routes.
+- `npm ci` PASS — 61 packages, 0 vulnerabilities.
+- All 14 declared commands in `.factory/claims.json` passed verbatim:
+  `reschedule-receipt`, `ics-import`, `data-export`, `data-import`,
+  `demo-isolation`, `local-only`, `free-core`, `paid-checkout`,
+  `offline-reload`, `manual-estimate-trims`, `uncertainty-visible`,
+  `indexeddb-storage`, `license-token-privacy`, and `billing-terms`.
+- `npm test` PASS — 7 Vitest tests and 50 Playwright checks across desktop
+  Chromium and the 390 px mobile project (`test-results/.last-run.json`:
+  `{"status":"passed","failedTests":[]}`).
+- `npm run build` PASS — `dist/index.html` is present; initial JS is 38.88 KB
+  (12.56 KB gzip) and CSS is 10.07 KB (3.20 KB gzip).
 
-Evidence screenshots: `/tmp/drc-live-final-3/landing-mobile.png` and
-`/tmp/drc-live-final-3/404-mobile.png`; local desktop and mobile captures are
-at `/tmp/drc-verify-final-2/`.
+Local verification:
+
+- `/opt/fleet/lib/verify-url.sh http://127.0.0.1:4173/ /tmp/drc-polish-2-local`
+  PASS — title, `lang=en`, one h1, main landmark, image alt text, named
+  controls, and no console/page errors. Evidence:
+  `/tmp/drc-polish-2-local/verify.json`.
+
+Cold production verification after deployment:
+
+- `/opt/fleet/lib/verify-url.sh https://workload-reschedule-receipts.sociobot.in/ /tmp/drc-polish-2-live`
+  PASS with the same semantic and console checks. Evidence:
+  `/tmp/drc-polish-2-live/verify.json`.
+- Fresh 390 px Playwright pass confirmed the fixed first-screen text,
+  `?demo=1` banner/reset/start-for-real controls, Demo → Privacy → browser
+  Back focus and live announcement, and a real HTTP 404.
+- Axe found zero serious or critical violations on `/`, `/demo`, `/planner`,
+  `/privacy`, `/terms`, and `/404.html`. Ordinary routes had no console/page
+  errors. Screenshots: `/tmp/drc-polish-2-live/landing-mobile.png` and
+  `/tmp/drc-polish-2-live/404-mobile.png`.
 
 ## Run and deploy
 
@@ -103,6 +71,8 @@ npm run build
 /opt/fleet/lib/deploy-static.sh workload-reschedule-receipts /work/repo/dist
 ```
 
-## Known gaps
+## Known gaps / next steps
 
-None.
+None. The static PWA remains local-first, offline-capable after first visit,
+and intentionally uses deterministic scheduling rather than an unnecessary AI
+feature or backend.
