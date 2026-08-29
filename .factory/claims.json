@@ -1,7 +1,7 @@
 [
   {
     "id": "reschedule-receipt",
-    "claim": "Marking a missed block produces a revised plan and risk receipt.",
+    "claim": "Marking a missed block produces a revised plan and a list of deadlines at risk.",
     "where": "landing preview, planner, README",
     "test": "npm test -- --grep @claim:reschedule-receipt",
     "sandbox": "fresh browser context at /demo; click a sample block and assert a new receipt and revised blocks"

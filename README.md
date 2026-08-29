@@ -2,7 +2,7 @@
 
 Reschedule missed study time and see which deadlines are at risk.
 
-Deadline Reality Check keeps a student’s study plan in this browser. Add task estimates, protect busy time with an ICS calendar, then mark a study block missed. See a new plan that fits your study hours and a list of deadlines at risk.
+Deadline Reality Check keeps a student’s study plan in this browser. Add task estimates, protect busy time with a calendar (.ics) file, then mark a study block missed. See a new plan that fits your study hours and a list of deadlines at risk.
 
 Try the isolated sample at [/demo](/demo) or <https://workload-reschedule-receipts.sociobot.in/demo>.
 

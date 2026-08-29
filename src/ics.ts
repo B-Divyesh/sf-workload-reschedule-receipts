@@ -16,7 +16,7 @@ function parseIcsDate(raw: string): Date | null {
 }
 
 export function parseIcs(text: string): BusyEvent[] {
-  if (!text.includes('BEGIN:VCALENDAR')) throw new Error('This file is not an ICS calendar.');
+  if (!text.includes('BEGIN:VCALENDAR')) throw new Error('This file is not a calendar (.ics) file.');
   const lines = unfold(text);
   const events: BusyEvent[] = [];
   let current: Record<string, string> | null = null;

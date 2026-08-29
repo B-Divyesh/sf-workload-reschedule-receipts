@@ -39,6 +39,6 @@ describe('ICS parser', () => {
   it('reads timed events and rejects non-calendars', () => {
     const events = parseIcs('BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART:20300101T090000Z\nDTEND:20300101T100000Z\nSUMMARY:Chemistry class\nEND:VEVENT\nEND:VCALENDAR');
     expect(events[0].title).toBe('Chemistry class');
-    expect(() => parseIcs('hello')).toThrow('not an ICS');
+    expect(() => parseIcs('hello')).toThrow('not a calendar (.ics) file');
   });
 });

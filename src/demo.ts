@@ -13,7 +13,7 @@ export function makeDemoState(): AppState {
   const tasks: StudyTask[] = [
     { id: 'demo-bio', title: 'Draft biology lab discussion', course: 'BIO 204', estimateMinutes: 180, doneMinutes: 0, trimMinutes: 0, deadline: at(1, 18).toISOString(), confidence: 'fair', priority: 'fixed' },
     { id: 'demo-history', title: 'Check history essay citations', course: 'HIST 118', estimateMinutes: 120, doneMinutes: 0, trimMinutes: 0, deadline: at(2, 12).toISOString(), confidence: 'rough', priority: 'flexible' },
-    { id: 'demo-stats', title: 'Finish statistics problem set', course: 'STAT 210', estimateMinutes: 150, doneMinutes: 0, trimMinutes: 0, deadline: at(2, 17).toISOString(), confidence: 'solid', priority: 'fixed' },
+    { id: 'demo-stats', title: 'Finish statistics problem set', course: 'STAT 210', estimateMinutes: 360, doneMinutes: 0, trimMinutes: 0, deadline: at(2, 17).toISOString(), confidence: 'solid', priority: 'fixed' },
     { id: 'demo-reading', title: 'Read seminar paper', course: 'SOC 302', estimateMinutes: 90, doneMinutes: 0, trimMinutes: 0, deadline: at(3, 15).toISOString(), confidence: 'rough', priority: 'flexible' },
   ];
   const busyEvents = [

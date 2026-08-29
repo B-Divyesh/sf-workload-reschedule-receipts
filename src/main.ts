@@ -170,12 +170,12 @@ function landing(): string {
         <p class="hero-lead">For students whose missed work block could turn several assignments into one late night.</p>
         <div class="hero-actions">
           <a class="button button-primary" href="/demo" data-route>Try it with sample data</a>
-          <span class="action-note">A missed block and risk receipt load next.</span>
+          <span class="action-note">A missed block, revised plan, and deadlines at risk load next.</span>
         </div>
         <ul class="facts">
           <li>Your plan stays on this device.</li>
           <li>It works offline after your first visit.</li>
-          <li>Core planning is free. Unlimited plans cost $9 once.</li>
+          <li>Plan up to four active tasks for free. Add unlimited active tasks for $9 once.</li>
         </ul>
       </div>
       <div class="hero-art">
@@ -198,13 +198,13 @@ function landing(): string {
       <div class="section-intro"><span class="eyebrow">How it works</span><h2 id="how-title">Rebuild the week in three moves</h2></div>
       <div class="how-grid">
         <div class="step"><span class="step-number">01 / ESTIMATE</span><h3>Add the work you can name</h3><p>Enter each task, deadline, time estimate, and estimate confidence.</p></div>
-        <div class="step"><span class="step-number">02 / BLOCK</span><h3>Protect time already taken</h3><p>Import an ICS calendar. Class, work, and appointments stay blocked.</p></div>
+        <div class="step"><span class="step-number">02 / BLOCK</span><h3>Protect time already taken</h3><p>Import a calendar (.ics) file. Class, work, and appointments stay blocked.</p></div>
         <div class="step"><span class="step-number">03 / RECOVER</span><h3>Mark the block you missed</h3><p>See a new plan that fits your study hours and deadlines at risk.</p></div>
       </div>
     </div></section>
     <section class="section" aria-labelledby="limits-title"><div class="shell policy-grid">
       <div><span class="eyebrow">Planning scope</span><h2 id="limits-title">What this planner does</h2><p>Enter estimates, protect busy time, and see what can still fit before each deadline.</p><p>Rough estimates stay marked in a receipt so you can review them.</p></div>
-      <div><span class="eyebrow">Local by default</span><h2>How calendar data is handled</h2><p>ICS files are read in your browser. Assignment and calendar data stay in this browser unless you export a backup.</p><p><a href="/privacy" data-route>Read the privacy details →</a></p></div>
+      <div><span class="eyebrow">Local by default</span><h2>How calendar data is handled</h2><p>Calendar (.ics) files are read in your browser. Assignment and calendar data stay in this browser unless you export a backup.</p><p><a href="/privacy" data-route>Read the privacy details →</a></p></div>
     </div></section>
     ${pricingSection()}
   </main>`, '/');
@@ -212,8 +212,8 @@ function landing(): string {
 
 function pricingSection(): string {
   return `<section class="section" aria-labelledby="price-title"><div class="shell preview-grid">
-    <div><span class="eyebrow">Keep using it</span><h2 id="price-title">Four tasks free.</h2><p>The free plan includes the full rescheduler, risk receipt, calendar import, and data export.</p></div>
-    <div class="panel panel-signal"><p class="price">$9 once</p><h3>Unlimited plans and receipt history</h3><p>Buy once to add unlimited active tasks and keep every past receipt.</p>
+    <div><span class="eyebrow">Keep using it</span><h2 id="price-title">Four tasks free.</h2><p>The free plan includes rescheduling, calendar import, data export, and a list of deadlines at risk.</p></div>
+    <div class="panel panel-signal"><p class="price">$9 once</p><h3>Unlimited active tasks and receipt history</h3><p>Buy once to add unlimited active tasks and keep every past receipt.</p>
       <div class="button-row"><a class="button button-primary" href="${checkoutUrl}">Buy the one-time license</a></div>
       <form data-license-form><div class="form-field"><label for="license-token">Have a license? Paste it</label><input id="license-token" name="license" autocomplete="off" required></div><button class="button-quiet" type="submit">Verify my license</button></form>
       ${license.notice ? `<p class="form-error" role="status">${esc(license.notice)} <a href="${checkoutUrl}">Buy a license</a>.</p>` : ''}
@@ -292,7 +292,7 @@ function planner(): string {
             <div class="form-field form-field-wide"><label for="priority">Can this task move?</label><select id="priority" name="priority"><option value="fixed">Keep it ahead of flexible work</option><option value="flexible">Move it when needed</option></select></div>
           </div><p class="form-error" role="alert">${esc(formMessage)}</p><button class="button-primary" type="submit">Add assignment and plan it</button></form>
         </section>
-        <section class="panel" aria-labelledby="calendar-title"><h2 id="calendar-title">Protect your busy time</h2><p>Import an ICS file exported from your calendar. The file is read here.</p><div class="form-field"><label for="ics-file">ICS calendar</label><input id="ics-file" data-ics-input type="file" accept=".ics,text/calendar"><span class="field-help">${state.calendarName ? `${esc(state.calendarName)} · ${state.busyEvents.length} timed events` : 'No calendar imported. Your study hours are still enforced.'}</span></div></section>
+        <section class="panel" aria-labelledby="calendar-title"><h2 id="calendar-title">Protect your busy time</h2><p>Import a calendar (.ics) file exported from your calendar. The file is read here.</p><div class="form-field"><label for="ics-file">Calendar (.ics) file</label><input id="ics-file" data-ics-input type="file" accept=".ics,text/calendar"><span class="field-help">${state.calendarName ? `${esc(state.calendarName)} · ${state.busyEvents.length} timed events` : 'No calendar imported. Your study hours are still enforced.'}</span></div></section>
         <details class="panel settings"><summary>Study limits and data</summary>
           <form data-settings-form><div class="form-grid"><div class="form-field"><label for="day-start">Start hour</label><input id="day-start" name="dayStart" type="number" min="0" max="22" value="${state.settings.dayStartHour}"></div><div class="form-field"><label for="day-end">End hour</label><input id="day-end" name="dayEnd" type="number" min="1" max="23" value="${state.settings.dayEndHour}"></div><div class="form-field"><label for="daily-limit">Daily study limit</label><select id="daily-limit" name="dailyLimit"><option value="120" ${state.settings.maxDailyMinutes === 120 ? 'selected' : ''}>2 hours</option><option value="180" ${state.settings.maxDailyMinutes === 180 ? 'selected' : ''}>3 hours</option><option value="240" ${state.settings.maxDailyMinutes === 240 ? 'selected' : ''}>4 hours</option><option value="360" ${state.settings.maxDailyMinutes === 360 ? 'selected' : ''}>6 hours</option></select></div><div class="form-field"><label for="block-size">Longest work block</label><select id="block-size" name="blockSize"><option value="30" ${state.settings.blockMinutes === 30 ? 'selected' : ''}>30 minutes</option><option value="60" ${state.settings.blockMinutes === 60 ? 'selected' : ''}>1 hour</option><option value="90" ${state.settings.blockMinutes === 90 ? 'selected' : ''}>1 hour 30 minutes</option></select></div></div><button type="submit">Save limits and rebuild</button></form>
           <div class="button-row"><button type="button" class="button-quiet" data-action="export-data">Export my data</button><label class="button button-quiet" for="import-data">Import a backup</label><input id="import-data" data-import-input class="visually-hidden" type="file" accept="application/json"></div>
@@ -314,7 +314,7 @@ function privacy(): string {
 }
 
 function terms(): string {
-  return shell(`<main id="main"><article class="shell legal"><span class="eyebrow">Terms</span><h1 tabindex="-1">Use the receipt as a planning aid</h1><p>Effective August 28, 2026.</p><h2>The service</h2><p>Deadline Reality Check proposes study blocks from information you enter. It cannot guarantee completion, grades, or deadline acceptance.</p><h2>Your responsibility</h2><p>Check every deadline and estimate. Keep your own backup before clearing browser data.</p><h2>Purchase</h2><p>The $9 license is a one-time purchase for unlimited active tasks and receipt history. Sociobot and Dodo are the merchant of record. Their checkout handles payment and refunds. A refund revokes the license.</p><h2>Availability</h2><p>The app is provided as available, without a promise that every schedule will fit. Core planning continues offline after the app has loaded once.</p><h2>Contact</h2><p>Questions can be sent to <a href="mailto:support@sociobot.in">support@sociobot.in</a>.</p></article></main>`, '/terms');
+  return shell(`<main id="main"><article class="shell legal"><span class="eyebrow">Terms</span><h1 tabindex="-1">Use the receipt as a planning aid</h1><p>Effective August 28, 2026.</p><h2>The service</h2><p>Deadline Reality Check proposes study blocks from information you enter. It cannot guarantee completion, grades, or deadline acceptance.</p><h2>Your responsibility</h2><p>Check every deadline and estimate. Keep your own backup before clearing browser data.</p><h2>Purchase</h2><p>The $9 license is a one-time purchase for unlimited active tasks and receipt history. Sociobot and Dodo are the merchant of record. Their checkout handles payment and refunds. A refund revokes the license.</p><h2>Availability</h2><p>Planning continues offline after the app has loaded once. The app cannot promise that every schedule will fit.</p><h2>Contact</h2><p>Questions can be sent to <a href="mailto:support@sociobot.in">support@sociobot.in</a>.</p></article></main>`, '/terms');
 }
 
 function notFound(): string {
@@ -561,7 +561,10 @@ async function start(): Promise<void> {
     if (demo) state = makeDemoState();
     else if (wasDemo) state = (await loadState()) ?? emptyState();
     render();
-    document.querySelector<HTMLElement>('h1')?.focus();
+    const heading = document.querySelector<HTMLElement>('h1');
+    heading?.focus();
+    const status = document.querySelector<HTMLElement>('#route-status');
+    if (status && heading) status.textContent = heading.textContent;
   });
   window.addEventListener('online', updateNetworkBanner);
   window.addEventListener('offline', updateNetworkBanner);

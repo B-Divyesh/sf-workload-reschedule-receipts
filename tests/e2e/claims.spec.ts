@@ -9,6 +9,8 @@ test('@claim:reschedule-receipt turns a missed block into a revised plan and rec
   await expect(page.getByRole('heading', { name: 'What this miss changes' })).toBeVisible();
   await expect(page.getByText(/Replacement:/)).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Revised study blocks' })).toBeVisible();
+  const deadlineRisk = page.locator('.receipt-section', { has: page.getByRole('heading', { name: 'Deadline risk' }) });
+  await expect(deadlineRisk.getByRole('list')).toHaveCount(1);
   const firstMissed = page.getByRole('button', { name: /^Mark .* missed$/ }).first();
   await firstMissed.click();
   await expect(page.getByText('The plan changed. Read the receipt first.')).toBeVisible();
@@ -239,7 +241,7 @@ test('a cached invalid license keeps its inactive notice after reload', async ({
 test('landing and planner have no serious accessibility issues or console errors', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
-  for (const route of ['/', '/demo', '/privacy', '/terms']) {
+  for (const route of ['/', '/demo', '/planner', '/privacy', '/terms', '/404.html']) {
     await page.goto(route);
     await expect(page.locator('main')).toHaveCount(1);
     await expect(page.locator('h1')).toHaveCount(1);
@@ -249,7 +251,7 @@ test('landing and planner have no serious accessibility issues or console errors
   expect(errors).toEqual([]);
 });
 
-test('direct routes set their own title, description, canonical URL, and focused heading', async ({ page }) => {
+test('direct routes set their own title, description, canonical URL, focused heading, and route announcement', async ({ page }) => {
   const routes = [
     ['/planner', 'Planner — Deadline Reality Check', 'https://workload-reschedule-receipts.sociobot.in/planner'],
     ['/demo', 'Demo — Deadline Reality Check', 'https://workload-reschedule-receipts.sociobot.in/demo'],
@@ -265,8 +267,18 @@ test('direct routes set their own title, description, canonical URL, and focused
   }
   await page.getByLabel('Main navigation').getByRole('link', { name: 'Privacy' }).click();
   await expect(page.locator('h1')).toBeFocused();
+  await expect(page.locator('#route-status')).toHaveText('Your plan stays on your device');
   await page.goBack();
   await expect(page.locator('h1')).toBeFocused();
+  await expect(page.locator('#route-status')).toHaveText('Use the receipt as a planning aid');
+});
+
+test('the first screen uses plain action, calendar, and pricing language', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByText('A missed block, revised plan, and deadlines at risk load next.')).toBeVisible();
+  await expect(page.getByText('Plan up to four active tasks for free. Add unlimited active tasks for $9 once.')).toBeVisible();
+  await expect(page.getByText('Import a calendar (.ics) file. Class, work, and appointments stay blocked.')).toBeVisible();
+  await expect(page.getByText('risk receipt', { exact: false })).toHaveCount(0);
 });
 
 test('dark routes keep footer text and links readable', async ({ page }) => {
