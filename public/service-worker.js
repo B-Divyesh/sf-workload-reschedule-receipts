@@ -1,4 +1,4 @@
-const VERSION = 'drc-v4';
+const VERSION = 'drc-v5';
 const STATIC = ['/manifest.webmanifest', '/favicon.svg', '/assets/hero-plan-720.webp', '/assets/hero-plan-1200.webp'];
 
 self.addEventListener('install', (event) => {

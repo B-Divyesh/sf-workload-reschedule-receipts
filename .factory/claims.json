@@ -4,21 +4,21 @@
     "claim": "Marking a missed block produces a revised plan and a list of deadlines at risk.",
     "where": "landing preview, planner, README",
     "test": "npm test -- --grep @claim:reschedule-receipt",
-    "sandbox": "fresh browser context at /demo; click a sample block and assert a new receipt and revised blocks"
+    "sandbox": "fresh browser context at /?demo=1; capture the seeded receipt, schedule, and risk; miss the next block; assert all three outcomes update"
   },
   {
     "id": "receipt-copy",
     "claim": "Copies the current reschedule receipt to the clipboard.",
     "where": "planner receipt",
     "test": "npm test -- --grep @claim:receipt-copy",
-    "sandbox": "fresh browser context at /demo; copy the sample receipt and assert the clipboard contains its missed work and risk details"
+    "sandbox": "fresh browser context at /?demo=1; copy the sample receipt and assert the clipboard contains its missed work and risk details"
   },
   {
     "id": "receipt-download",
     "claim": "Downloads the current reschedule receipt as a text file.",
     "where": "planner receipt",
     "test": "npm test -- --grep @claim:receipt-download",
-    "sandbox": "fresh browser context at /demo; download the sample receipt and assert the text file name and receipt content"
+    "sandbox": "fresh browser context at /?demo=1; download the sample receipt and assert the text file name and receipt content"
   },
   {
     "id": "assignment-deletion",
@@ -32,7 +32,7 @@
     "claim": "Imports timed events from an ICS calendar as unavailable time.",
     "where": "landing how-it-works, planner, README",
     "test": "npm test -- --grep @claim:ics-import",
-    "sandbox": "fresh browser context; upload the shipped two-event fixture and assert both events are accepted"
+    "sandbox": "fresh browser context with a fixed clock; upload the shipped two-event fixture and assert every resulting study block avoids both event ranges"
   },
   {
     "id": "data-export",
@@ -46,63 +46,63 @@
     "claim": "Imports a JSON backup into the local plan.",
     "where": "planner, README",
     "test": "npm test -- --grep @claim:data-import",
-    "sandbox": "fresh browser context; export a plan, import that JSON file, and assert its assignment is restored"
+    "sandbox": "fresh demo; export distinctive assignment, calendar, settings, and receipt values; enter an empty real plan; import and assert every value is restored"
   },
   {
     "id": "demo-isolation",
     "claim": "Demo sample data stays in memory and is not saved into a real plan.",
     "where": "demo banner, privacy, README",
     "test": "npm test -- --grep @claim:demo-isolation",
-    "sandbox": "fresh browser context; open demo, reset and reschedule it, inspect IndexedDB, then start for real and assert the real plan is empty"
+    "sandbox": "fresh browser context; open /?demo=1, reset and reschedule it, inspect IndexedDB, then start for real and assert the real plan is empty"
   },
   {
     "id": "local-only",
-    "claim": "Planning data stays on this site and uses no analytics, third-party fonts, or runtime content CDNs.",
+    "claim": "Planning data stays in this browser. The app uses no analytics, external fonts, or externally hosted page assets.",
     "where": "landing facts, privacy, README",
     "test": "npm test -- --grep @claim:local-only",
-    "sandbox": "fresh browser context; record every request during the complete demo reset and reschedule flow and assert every request is same-origin"
+    "sandbox": "fresh browser context; cover landing, complete demo, and real add/calendar/import/export flows; assert exact request paths, same origin, and no beacons"
   },
   {
     "id": "free-core",
-    "claim": "The complete rescheduler is free for four active tasks.",
+    "claim": "The complete rescheduler is free for four active assignments.",
     "where": "landing facts, paid section, planner",
     "test": "npm test -- --grep @claim:free-core",
-    "sandbox": "fresh browser context; add four tasks, assert all plan, then assert the fifth is declined with the stated limit"
+    "sandbox": "fresh browser context; add four assignments, assert all plan, then assert the fifth is declined with the stated limit"
   },
   {
     "id": "paid-checkout",
-    "claim": "Unlimited active tasks and receipt history cost $9 once through Sociobot checkout.",
+    "claim": "Unlimited active assignments and receipt history cost $9 once through Sociobot checkout.",
     "where": "landing paid section, planner, terms",
     "test": "npm test -- --grep @claim:paid-checkout",
-    "sandbox": "fresh browser context; assert the exact price and checkout URL, mock a valid verifier response, and assert a second demo miss appears in Past receipts"
+    "sandbox": "fresh browser context; assert price and checkout URL, mock a valid license, plan five assignments, and assert a second receipt enters history"
   },
   {
     "id": "offline-reload",
     "claim": "Works offline after the first visit.",
     "where": "landing facts, terms, README",
     "test": "npm test -- --grep @claim:offline-reload",
-    "sandbox": "fresh browser context at /demo; wait for service worker control, set the context offline, reload, and assert the planner and offline state"
+    "sandbox": "fresh browser context at /?demo=1; wait for service worker control, set the context offline, reload, and assert the planner and offline state"
   },
   {
     "id": "manual-estimate-trims",
     "claim": "Estimates change only when the student chooses a trim.",
     "where": "landing receipt preview, planner receipt",
     "test": "npm test -- --grep @claim:manual-estimate-trims",
-    "sandbox": "fresh browser context at /demo; assert a missed block leaves a sample estimate unchanged, then choose Trim 30 min and assert that estimate changes by 30 minutes"
+    "sandbox": "fresh browser context at /?demo=1; assert a missed block leaves a sample estimate unchanged, then choose Trim 30 min and assert that estimate changes by 30 minutes"
   },
   {
     "id": "uncertainty-visible",
     "claim": "Rough estimates stay marked in a receipt for review.",
     "where": "landing planning scope, planner receipt",
     "test": "npm test -- --grep @claim:uncertainty-visible",
-    "sandbox": "fresh browser context at /demo; assert a sample rough estimate and its receipt review label are visible"
+    "sandbox": "fresh browser context at /?demo=1; assert a sample rough estimate and its receipt review label are visible"
   },
   {
     "id": "indexeddb-storage",
     "claim": "Real plans are stored in this browser’s IndexedDB database.",
     "where": "README",
     "test": "npm test -- --grep @claim:indexeddb-storage",
-    "sandbox": "fresh browser context at /planner; add a task, reload, and inspect IndexedDB for deadline-reality-check:real"
+    "sandbox": "fresh browser context at /planner; add an assignment, reload, and inspect IndexedDB for deadline-reality-check:real"
   },
   {
     "id": "license-token-privacy",
@@ -113,9 +113,9 @@
   },
   {
     "id": "billing-terms",
-    "claim": "Sociobot and Dodo are the merchant of record; their checkout handles payment and refunds.",
-    "where": "terms",
+    "claim": "Checkout opens on Dodo through Sociobot.",
+    "where": "privacy, terms",
     "test": "npm test -- --grep @claim:billing-terms",
-    "sandbox": "fresh browser context; assert the published terms name the merchant and refund handling, and assert the Buy link starts at Sociobot checkout"
+    "sandbox": "fresh browser context; assert the terms wording, request the Sociobot checkout URL without following redirects, and verify its Dodo checkout host"
   }
 ]

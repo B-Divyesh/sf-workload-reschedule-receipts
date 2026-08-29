@@ -189,7 +189,7 @@ input[type="file"] { padding: 7px; }
   .hero-art { min-height: 390px; }
   .how-grid { grid-template-columns: 1fr; gap: 40px; }
   .app-heading { grid-template-columns: 1fr; }
-  .planner-grid > div:last-child { grid-row: 1; }
+  .demo-page .planner-grid > div:last-child { grid-row: 1; }
 }
 
 @media (max-width: 560px) {

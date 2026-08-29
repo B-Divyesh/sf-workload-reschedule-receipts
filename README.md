@@ -2,13 +2,13 @@
 
 Reschedule missed study time and see which deadlines are at risk.
 
-Deadline Reality Check keeps a student’s study plan in this browser. Add task estimates, protect busy time with a calendar (.ics) file, then mark a study block missed. See a new plan that fits your study hours and a list of deadlines at risk.
+Deadline Reality Check keeps a student’s study plan in this browser. Add assignment estimates, protect busy time with a calendar (.ics) file, then mark a study block missed. See a new plan that fits your study hours and a list of deadlines at risk.
 
-Try the isolated sample at [/demo](/demo) or <https://workload-reschedule-receipts.sociobot.in/demo>.
+Try the isolated sample at [/?demo=1](/?demo=1) or <https://workload-reschedule-receipts.sociobot.in/?demo=1>.
 
 ## What it does
 
-- Plans task estimates inside user-set study hours and a daily limit.
+- Plans assignment estimates inside user-set study hours and a daily limit.
 - Treats imported ICS events as unavailable time.
 - Rebuilds the plan after a missed block.
 - Lists moved work, possible user-approved trims, and deadline shortfalls.
@@ -17,7 +17,7 @@ Try the isolated sample at [/demo](/demo) or <https://workload-reschedule-receip
 - Exports and imports a JSON backup.
 - Reloads offline after the first online visit.
 
-The free plan supports four active tasks and the complete rescheduling flow. A $9 one-time license adds unlimited active tasks and saved receipt history. Checkout opens with Sociobot.
+The free plan supports four active assignments and the complete rescheduling flow. A $9 one-time license adds unlimited active assignments and saved receipt history. Checkout opens with Sociobot.
 
 ## Run locally
 
@@ -28,7 +28,7 @@ npm ci
 npm run dev
 ```
 
-Open <http://localhost:5173>. The demo is at <http://localhost:5173/demo>.
+Open <http://localhost:5173>. The demo is at <http://localhost:5173/?demo=1>.
 
 ## Test and build
 
@@ -45,7 +45,7 @@ npm run build
 
 ## Data and privacy
 
-Planning requests stay on this site. License checks send the stored token to the Sociobot billing API. No analytics, third-party fonts, or runtime content CDNs are used.
+Assignments and calendar data stay in this browser. License checks send the stored token to the Sociobot billing API. The app uses no analytics, external fonts, or externally hosted page assets.
 
 Read the in-product [/privacy](/privacy) and [/terms](/terms) pages for user-facing details.
 

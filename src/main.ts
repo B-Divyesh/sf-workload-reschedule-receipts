@@ -12,7 +12,7 @@ if (!app) throw new Error('App root is missing.');
 
 let state: AppState = emptyState();
 let route = window.location.pathname;
-let demo = route === '/demo' || new URLSearchParams(window.location.search).get('demo') === '1';
+let demo = isDemoUrl(window.location.href);
 let license: LicenseState = cachedLicenseState();
 let formMessage = '';
 let toastTimer = 0;
@@ -32,7 +32,7 @@ const metadata: Record<string, { description: string; path: string }> = {
   '/demo': { description: 'Try Deadline Reality Check with isolated sample assignments and a reschedule receipt.', path: '/demo' },
   '/privacy': { description: 'Learn how Deadline Reality Check stores plans and handles license checks.', path: '/privacy' },
   '/terms': { description: 'Read the Deadline Reality Check terms, license details, and purchase information.', path: '/terms' },
-  '/404': { description: 'Return to Deadline Reality Check, the local planner for missed study time.', path: '/404.html' },
+  '/404': { description: 'Return to Deadline Reality Check, the planner for missed study time.', path: '/404.html' },
 };
 
 function esc(value: unknown): string {
@@ -135,6 +135,11 @@ function formatDay(value: string): string {
   return new Intl.DateTimeFormat('en', { weekday: 'long', month: 'short', day: 'numeric' }).format(new Date(value));
 }
 
+function isDemoUrl(value: string): boolean {
+  const url = new URL(value, window.location.origin);
+  return url.pathname === '/demo' || url.searchParams.get('demo') === '1';
+}
+
 function shell(content: string, current: string): string {
   const nav = [
     ['/demo', 'Demo'],
@@ -169,13 +174,13 @@ function landing(): string {
         <h1 tabindex="-1">Reschedule missed study time</h1>
         <p class="hero-lead">For students whose missed work block could turn several assignments into one late night.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="/demo" data-route>Try it with sample data</a>
+          <a class="button button-primary" href="/?demo=1" data-route>Try it with sample data</a>
           <span class="action-note">A missed block, revised plan, and deadlines at risk load next.</span>
         </div>
         <ul class="facts">
           <li>Your plan stays on this device.</li>
           <li>It works offline after your first visit.</li>
-          <li>Plan up to four active tasks for free. Add unlimited active tasks for $9 once.</li>
+          <li>Plan up to four active assignments for free. Add unlimited active assignments for $9 once.</li>
         </ul>
       </div>
       <div class="hero-art">
@@ -195,16 +200,16 @@ function landing(): string {
       </article>
     </div></section>
     <section class="section" aria-labelledby="how-title"><div class="shell">
-      <div class="section-intro"><span class="eyebrow">How it works</span><h2 id="how-title">Rebuild the week in three moves</h2></div>
+      <div class="section-intro"><span class="eyebrow">How it works</span><h2 id="how-title">Reschedule missed work in three steps</h2></div>
       <div class="how-grid">
-        <div class="step"><span class="step-number">01 / ESTIMATE</span><h3>Add the work you can name</h3><p>Enter each task, deadline, time estimate, and estimate confidence.</p></div>
+        <div class="step"><span class="step-number">01 / ESTIMATE</span><h3>Add each assignment</h3><p>Enter each assignment, deadline, time estimate, and estimate confidence.</p></div>
         <div class="step"><span class="step-number">02 / BLOCK</span><h3>Protect time already taken</h3><p>Import a calendar (.ics) file. Class, work, and appointments stay blocked.</p></div>
-        <div class="step"><span class="step-number">03 / RECOVER</span><h3>Mark the block you missed</h3><p>See a new plan that fits your study hours and deadlines at risk.</p></div>
+        <div class="step"><span class="step-number">03 / RECOVER</span><h3>Mark the block you missed</h3><p>See a new plan that fits your study hours and lists deadlines at risk.</p></div>
       </div>
     </div></section>
     <section class="section" aria-labelledby="limits-title"><div class="shell policy-grid">
       <div><span class="eyebrow">Planning scope</span><h2 id="limits-title">What this planner does</h2><p>Enter estimates, protect busy time, and see what can still fit before each deadline.</p><p>Rough estimates stay marked in a receipt so you can review them.</p></div>
-      <div><span class="eyebrow">Local by default</span><h2>How calendar data is handled</h2><p>Calendar (.ics) files are read in your browser. Assignment and calendar data stay in this browser unless you export a backup.</p><p><a href="/privacy" data-route>Read the privacy details →</a></p></div>
+      <div><span class="eyebrow">Stored in this browser</span><h2>How calendar data is handled</h2><p>Calendar (.ics) files are read in your browser. Assignment and calendar data stay in this browser unless you export a backup.</p><p><a href="/privacy" data-route>Read the privacy details →</a></p></div>
     </div></section>
     ${pricingSection()}
   </main>`, '/');
@@ -212,8 +217,8 @@ function landing(): string {
 
 function pricingSection(): string {
   return `<section class="section" aria-labelledby="price-title"><div class="shell preview-grid">
-    <div><span class="eyebrow">Keep using it</span><h2 id="price-title">Four tasks free.</h2><p>The free plan includes rescheduling, calendar import, data export, and a list of deadlines at risk.</p></div>
-    <div class="panel panel-signal"><p class="price">$9 once</p><h3>Unlimited active tasks and receipt history</h3><p>Buy once to add unlimited active tasks and keep every past receipt.</p>
+    <div><span class="eyebrow">Free and paid limits</span><h2 id="price-title">Four assignments free.</h2><p>The free plan includes rescheduling, calendar import, data export, and a list of deadlines at risk.</p></div>
+    <div class="panel panel-signal"><p class="price">$9 once</p><h3>Unlimited active assignments and receipt history</h3><p>Buy once to add unlimited active assignments and keep every past receipt.</p>
       <div class="button-row"><a class="button button-primary" href="${checkoutUrl}">Buy the one-time license</a></div>
       <form data-license-form><div class="form-field"><label for="license-token">Have a license? Paste it</label><input id="license-token" name="license" autocomplete="off" required></div><button class="button-quiet" type="submit">Verify my license</button></form>
       ${license.notice ? `<p class="form-error" role="status">${esc(license.notice)} <a href="${checkoutUrl}">Buy a license</a>.</p>` : ''}
@@ -231,9 +236,9 @@ function planBlocks(): string {
     const heading = day !== lastDay ? `<li class="plan-day">${esc(day)}</li>` : '';
     lastDay = day;
     const task = taskById(block.taskId);
-    return `${heading}<li class="plan-block">
-      <span class="plan-time">${esc(formatTime(block.start))}</span>
-      <span><span class="task-title">${esc(task?.title ?? 'Task')}</span><br><span class="meta">${esc(task?.course)} · ${formatMinutes(block.minutes)}</span></span>
+    return `${heading}<li class="plan-block" data-block-start="${esc(block.start)}" data-block-end="${esc(block.end)}">
+      <time class="plan-time" datetime="${esc(block.start)}">${esc(formatTime(block.start))}</time>
+      <span><span class="task-title">${esc(task?.title ?? 'Assignment')}</span><br><span class="meta">${esc(task?.course)} · ${formatMinutes(block.minutes)}</span></span>
       <span class="plan-actions"><button type="button" data-action="done" data-id="${esc(block.id)}" aria-label="Mark ${esc(task?.title)} done">Done</button><button type="button" class="button-signal" data-action="miss" data-id="${esc(block.id)}" aria-label="Mark ${esc(task?.title)} missed">Missed</button></span>
     </li>`;
   }).join('')}</ol>${riskList()}`;
@@ -241,18 +246,18 @@ function planBlocks(): string {
 
 function riskList(): string {
   if (!state.risks.length) return '';
-  return `<aside class="risk-box" aria-labelledby="risk-title"><h3 id="risk-title">Work that does not fit</h3><ul class="risk-list">${state.risks.map((risk) => {
+  return `<section class="risk-box" aria-labelledby="risk-title"><h3 id="risk-title">Work that does not fit</h3><ul class="risk-list">${state.risks.map((risk) => {
     const task = taskById(risk.taskId);
-    return `<li><strong>${esc(task?.title)}</strong>: ${formatMinutes(risk.unscheduledMinutes)} short before ${esc(formatDateTime(risk.deadline))}.</li>`;
-  }).join('')}</ul></aside>`;
+    return `<li data-risk-minutes="${risk.unscheduledMinutes}"><strong>${esc(task?.title)}</strong>: ${formatMinutes(risk.unscheduledMinutes)} short before ${esc(formatDateTime(risk.deadline))}.</li>`;
+  }).join('')}</ul></section>`;
 }
 
 function receiptCard(receipt: Receipt): string {
   const hasRisk = receipt.risks.length > 0;
-  return `<article class="receipt" aria-labelledby="receipt-title">
+  return `<article class="receipt" aria-labelledby="receipt-title" data-receipt-id="${esc(receipt.id)}">
     <div class="receipt-head"><span class="receipt-label">RESCHEDULE / ${esc(receipt.id.slice(-6).toUpperCase())}</span><span class="${hasRisk ? 'status-risk' : 'status-safe'}">${hasRisk ? `${receipt.risks.length} deadline${receipt.risks.length === 1 ? '' : 's'} at risk` : 'No deadline at risk'}</span></div>
     <div class="receipt-section"><h2 id="receipt-title">What this miss changes</h2><p><strong>Missed:</strong> ${formatMinutes(receipt.missedMinutes)} of ${esc(receiptTaskTitle(receipt, receipt.missedTaskId))} at ${esc(formatDateTime(receipt.missedStart))}.</p><p><strong>Replacement:</strong> ${esc(receipt.replacement)}</p></div>
-    ${receipt.moved.length ? `<div class="receipt-section"><h3>Work that moves</h3><ul>${receipt.moved.map((item) => `<li>${esc(item)}</li>`).join('')}</ul></div>` : `<div class="receipt-section"><h3>Work that moves</h3><p>No other task moved.</p></div>`}
+    ${receipt.moved.length ? `<div class="receipt-section"><h3>Work that moves</h3><ul>${receipt.moved.map((item) => `<li>${esc(item)}</li>`).join('')}</ul></div>` : `<div class="receipt-section"><h3>Work that moves</h3><p>No other assignment moved.</p></div>`}
     <div class="receipt-section"><h3>What stays true</h3><ul>${receipt.kept.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>${receipt.shorten.length ? '<p class="field-help">Rough estimates are marked below for review.</p>' : ''}</div>
     ${receipt.shorten.filter((item) => canTrim(taskById(item.taskId))).length ? `<div class="receipt-section"><h3>Possible trims</h3><p>These are choices, not automatic cuts.</p>${receipt.shorten.filter((item) => canTrim(taskById(item.taskId))).map((item) => `<div class="data-row"><span>${esc(item.reason)}</span><button type="button" data-action="trim" data-id="${esc(item.taskId)}">Trim 30 min</button></div>`).join('')}</div>` : ''}
     ${hasRisk ? `<div class="receipt-section"><h3>Deadline risk</h3><ul>${receipt.risks.map((risk) => `<li>${esc(receiptTaskTitle(receipt, risk.taskId))} is ${formatMinutes(risk.unscheduledMinutes)} short.</li>`).join('')}</ul></div>` : ''}
@@ -266,7 +271,7 @@ function receiptHistory(): string {
 }
 
 function taskList(): string {
-  if (!state.tasks.length) return `<div class="empty"><h3>No assignments yet</h3><p>Add a task above. Its study blocks will appear beside this form.</p></div>`;
+  if (!state.tasks.length) return `<div class="empty"><h3>No assignments yet</h3><p>Add an assignment above. Its study blocks will appear beside this form.</p></div>`;
   return `<ul class="task-list">${state.tasks.map((task) => `<li class="task-item">
     <span><span class="task-title">${esc(task.title)}</span><br><span class="meta">${esc(task.course)} · ${formatMinutes(task.estimateMinutes - task.trimMinutes)} · due ${esc(formatDateTime(task.deadline))}</span><br><span class="tag">${esc(task.confidence)} estimate</span><span class="tag">${esc(task.priority)}</span></span>
     <button type="button" class="button-quiet button-danger" data-action="delete-task" data-id="${esc(task.id)}" aria-label="Delete ${esc(task.title)}">Delete</button>
@@ -278,24 +283,24 @@ function planner(): string {
   const nextDeadline = new Date(Date.now() + 2 * 86_400_000);
   nextDeadline.setHours(17, 0, 0, 0);
   const localDeadline = new Date(nextDeadline.getTime() - nextDeadline.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
-  return shell(`<main id="main" class="app-page"><div class="shell">
-    <div class="app-heading"><div><span class="eyebrow">Local recovery planner</span><h1 tabindex="-1">Rebuild the plan you have</h1><p class="hero-lead">Add real estimates, protect busy time, then mark the block you missed.</p></div><span class="tag">${license.active ? 'Unlimited license active' : `${activeTaskCount()} / 4 free tasks`}</span></div>
+  return shell(`<main id="main" class="app-page${demo ? ' demo-page' : ''}"><div class="shell">
+    <div class="app-heading"><div><span class="eyebrow">Assignment rescheduler</span><h1 tabindex="-1">Reschedule your study plan</h1><p class="hero-lead">Add real estimates, protect busy time, then mark the block you missed.</p></div><span class="tag">${license.active ? 'Unlimited license active' : `${activeTaskCount()} / 4 free assignments`}</span></div>
     <div class="planner-grid">
       <div>
         <section class="panel" aria-labelledby="add-title"><h2 id="add-title">Add an assignment</h2>
           <form data-task-form novalidate><div class="form-grid">
-            <div class="form-field form-field-wide"><label for="task-title">Task</label><input id="task-title" name="title" required maxlength="80" placeholder="Draft lab discussion"></div>
+            <div class="form-field form-field-wide"><label for="task-title">Assignment</label><input id="task-title" name="title" required maxlength="80" placeholder="Draft lab discussion"></div>
             <div class="form-field"><label for="course">Course</label><input id="course" name="course" required maxlength="40" placeholder="BIO 204"></div>
             <div class="form-field"><label for="deadline">Deadline</label><input id="deadline" name="deadline" type="datetime-local" required value="${localDeadline}"></div>
             <div class="form-field"><label for="estimate">Time estimate</label><select id="estimate" name="estimate"><option value="30">30 minutes</option><option value="60" selected>1 hour</option><option value="90">1 hour 30 minutes</option><option value="120">2 hours</option><option value="180">3 hours</option><option value="240">4 hours</option><option value="360">6 hours</option></select></div>
             <div class="form-field"><label for="confidence">How sure is the estimate?</label><select id="confidence" name="confidence"><option value="rough">Rough</option><option value="fair" selected>Fair</option><option value="solid">Solid</option></select></div>
-            <div class="form-field form-field-wide"><label for="priority">Can this task move?</label><select id="priority" name="priority"><option value="fixed">Keep it ahead of flexible work</option><option value="flexible">Move it when needed</option></select></div>
+            <div class="form-field form-field-wide"><label for="priority">Can this assignment move?</label><select id="priority" name="priority"><option value="fixed">Keep it ahead of flexible work</option><option value="flexible">Move it when needed</option></select></div>
           </div><p class="form-error" role="alert">${esc(formMessage)}</p><button class="button-primary" type="submit">Add assignment and plan it</button></form>
         </section>
         <section class="panel" aria-labelledby="calendar-title"><h2 id="calendar-title">Protect your busy time</h2><p>Import a calendar (.ics) file exported from your calendar. The file is read here.</p><div class="form-field"><label for="ics-file">Calendar (.ics) file</label><input id="ics-file" data-ics-input type="file" accept=".ics,text/calendar"><span class="field-help">${state.calendarName ? `${esc(state.calendarName)} · ${state.busyEvents.length} timed events` : 'No calendar imported. Your study hours are still enforced.'}</span></div></section>
         <details class="panel settings"><summary>Study limits and data</summary>
-          <form data-settings-form><div class="form-grid"><div class="form-field"><label for="day-start">Start hour</label><input id="day-start" name="dayStart" type="number" min="0" max="22" value="${state.settings.dayStartHour}"></div><div class="form-field"><label for="day-end">End hour</label><input id="day-end" name="dayEnd" type="number" min="1" max="23" value="${state.settings.dayEndHour}"></div><div class="form-field"><label for="daily-limit">Daily study limit</label><select id="daily-limit" name="dailyLimit"><option value="120" ${state.settings.maxDailyMinutes === 120 ? 'selected' : ''}>2 hours</option><option value="180" ${state.settings.maxDailyMinutes === 180 ? 'selected' : ''}>3 hours</option><option value="240" ${state.settings.maxDailyMinutes === 240 ? 'selected' : ''}>4 hours</option><option value="360" ${state.settings.maxDailyMinutes === 360 ? 'selected' : ''}>6 hours</option></select></div><div class="form-field"><label for="block-size">Longest work block</label><select id="block-size" name="blockSize"><option value="30" ${state.settings.blockMinutes === 30 ? 'selected' : ''}>30 minutes</option><option value="60" ${state.settings.blockMinutes === 60 ? 'selected' : ''}>1 hour</option><option value="90" ${state.settings.blockMinutes === 90 ? 'selected' : ''}>1 hour 30 minutes</option></select></div></div><button type="submit">Save limits and rebuild</button></form>
-          <div class="button-row"><button type="button" class="button-quiet" data-action="export-data">Export my data</button><label class="button button-quiet" for="import-data">Import a backup</label><input id="import-data" data-import-input class="visually-hidden" type="file" accept="application/json"></div>
+          <form data-settings-form><div class="form-grid"><div class="form-field"><label for="day-start">Start hour</label><input id="day-start" name="dayStart" type="number" min="0" max="22" value="${state.settings.dayStartHour}"></div><div class="form-field"><label for="day-end">End hour</label><input id="day-end" name="dayEnd" type="number" min="1" max="23" value="${state.settings.dayEndHour}"></div><div class="form-field"><label for="daily-limit">Daily study limit</label><select id="daily-limit" name="dailyLimit"><option value="120" ${state.settings.maxDailyMinutes === 120 ? 'selected' : ''}>2 hours</option><option value="180" ${state.settings.maxDailyMinutes === 180 ? 'selected' : ''}>3 hours</option><option value="240" ${state.settings.maxDailyMinutes === 240 ? 'selected' : ''}>4 hours</option><option value="360" ${state.settings.maxDailyMinutes === 360 ? 'selected' : ''}>6 hours</option></select></div><div class="form-field"><label for="block-size">Longest work block</label><select id="block-size" name="blockSize"><option value="30" ${state.settings.blockMinutes === 30 ? 'selected' : ''}>30 minutes</option><option value="60" ${state.settings.blockMinutes === 60 ? 'selected' : ''}>1 hour</option><option value="90" ${state.settings.blockMinutes === 90 ? 'selected' : ''}>1 hour 30 minutes</option></select></div></div><button type="submit" aria-label="Save limits and rebuild">Save limits and rebuild</button></form>
+          <div class="button-row"><button type="button" class="button-quiet" data-action="export-data" aria-label="Export my data">Export my data</button><label class="button button-quiet" for="import-data">Import a backup</label><input id="import-data" data-import-input class="visually-hidden" type="file" accept="application/json"></div>
         </details>
         <section class="panel" aria-labelledby="task-list-title"><h2 id="task-list-title">Assignment estimates</h2>${taskList()}</section>
       </div>
@@ -310,15 +315,15 @@ function planner(): string {
 }
 
 function privacy(): string {
-  return shell(`<main id="main"><article class="shell legal"><span class="eyebrow">Policy</span><h1 tabindex="-1">Your plan stays on your device</h1><p>Effective August 28, 2026.</p><h2>What this app stores</h2><p>The app stores assignments, estimates, calendar events, settings, and receipts in this browser. Demo data stays in memory and is discarded when you leave the demo.</p><h2>What leaves your device</h2><p>Planning data stays in this browser. A license check sends its token to the Sociobot billing API. Opening checkout takes you to Sociobot.</p><h2>Your choices</h2><p>You can export a backup from the planner. You can delete assignments or clear site data in your browser.</p><h2>Calendar files</h2><p>ICS files are parsed in your browser.</p><h2>Contact</h2><p>Questions can be sent to <a href="mailto:privacy@sociobot.in">privacy@sociobot.in</a>.</p></article></main>`, '/privacy');
+  return shell(`<main id="main"><article class="shell legal"><span class="eyebrow">Policy</span><h1 tabindex="-1">Privacy for Deadline Reality Check</h1><p>Your plan stays on your device. Effective August 28, 2026.</p><h2>What this app stores</h2><p>The app stores assignments, estimates, calendar events, settings, and receipts in this browser. Demo data stays in memory and is discarded when you leave the demo.</p><h2>What leaves your device</h2><p>Planning data stays in this browser. A license check sends its token to the Sociobot billing API. The buy link starts with Sociobot and opens checkout on Dodo.</p><h2>Your choices</h2><p>You can export a backup or delete assignments from the planner.</p><h2>Calendar files</h2><p>Calendar (.ics) files are parsed in your browser.</p><h2>Contact</h2><p>Questions can be sent to <a href="mailto:privacy@sociobot.in">privacy@sociobot.in</a>.</p></article></main>`, '/privacy');
 }
 
 function terms(): string {
-  return shell(`<main id="main"><article class="shell legal"><span class="eyebrow">Terms</span><h1 tabindex="-1">Use the receipt as a planning aid</h1><p>Effective August 28, 2026.</p><h2>The service</h2><p>Deadline Reality Check proposes study blocks from information you enter. It cannot guarantee completion, grades, or deadline acceptance.</p><h2>Your responsibility</h2><p>Check every deadline and estimate. Keep your own backup before clearing browser data.</p><h2>Purchase</h2><p>The $9 license is a one-time purchase for unlimited active tasks and receipt history. Sociobot and Dodo are the merchant of record. Their checkout handles payment and refunds. A refund revokes the license.</p><h2>Availability</h2><p>Planning continues offline after the app has loaded once. The app cannot promise that every schedule will fit.</p><h2>Contact</h2><p>Questions can be sent to <a href="mailto:support@sociobot.in">support@sociobot.in</a>.</p></article></main>`, '/terms');
+  return shell(`<main id="main"><article class="shell legal"><span class="eyebrow">Terms</span><h1 tabindex="-1">Terms for Deadline Reality Check</h1><p>Use each receipt as a planning aid. Effective August 28, 2026.</p><h2>The service</h2><p>Deadline Reality Check proposes study blocks from information you enter. It cannot guarantee completion, grades, or deadline acceptance.</p><h2>Your responsibility</h2><p>Check every deadline and estimate. Keep your own backup before clearing browser data.</p><h2>Purchase</h2><p>The $9 license is a one-time purchase for unlimited active assignments and receipt history. Checkout opens on Dodo through Sociobot.</p><h2>Availability</h2><p>Planning continues offline after the app has loaded once. The app cannot promise that every schedule will fit.</p><h2>Contact</h2><p>Questions can be sent to <a href="mailto:support@sociobot.in">support@sociobot.in</a>.</p></article></main>`, '/terms');
 }
 
 function notFound(): string {
-  return shell(`<main id="main"><article class="shell legal"><span class="eyebrow">404 / wrong turn</span><h1 tabindex="-1">This block is not in the plan</h1><p>The address may have moved. Your saved plan is still on this device.</p><a class="button button-primary" href="/" data-route>Return home</a></article></main>`, '/404');
+  return shell(`<main id="main"><article class="shell legal"><span class="eyebrow">404 / page not found</span><h1 tabindex="-1">This page was not found</h1><p>The address may have moved. Your saved plan is still on this device.</p><a class="button button-primary" href="/" data-route>Return home</a></article></main>`, '/404');
 }
 
 function showToast(message: string): void {
@@ -339,7 +344,7 @@ function receiptText(receipt: Receipt): string {
   const risk = receipt.risks.length
     ? receipt.risks.map((item) => `${receiptTaskTitle(receipt, item.taskId)}: ${formatMinutes(item.unscheduledMinutes)} short`).join('\n')
     : 'No deadline is at risk.';
-  return `DEADLINE REALITY CHECK\n\nMissed: ${formatMinutes(receipt.missedMinutes)} of ${receiptTaskTitle(receipt, receipt.missedTaskId)}\nReplacement: ${receipt.replacement}\n\nMoved:\n${receipt.moved.join('\n') || 'No other task moved.'}\n\nRisk:\n${risk}\n\nEstimates came from the student.`;
+  return `DEADLINE REALITY CHECK\n\nMissed: ${formatMinutes(receipt.missedMinutes)} of ${receiptTaskTitle(receipt, receipt.missedTaskId)}\nReplacement: ${receipt.replacement}\n\nMoved:\n${receipt.moved.join('\n') || 'No other assignment moved.'}\n\nRisk:\n${risk}\n\nEstimates came from the student.`;
 }
 
 function download(name: string, content: string, type: string): void {
@@ -427,9 +432,9 @@ function bindEvents(): void {
     const title = String(data.get('title') ?? '').trim();
     const course = String(data.get('course') ?? '').trim();
     const deadline = new Date(String(data.get('deadline')));
-    if (!title || !course || Number.isNaN(deadline.getTime())) formMessage = 'Add a task, course, and valid deadline.';
+    if (!title || !course || Number.isNaN(deadline.getTime())) formMessage = 'Add an assignment, course, and valid deadline.';
     else if (deadline <= new Date()) formMessage = 'The deadline has passed. Choose a future time.';
-    else if (!license.active && activeTaskCount() >= 4) formMessage = 'The free plan holds four active tasks. Finish one or buy the one-time license.';
+    else if (!license.active && activeTaskCount() >= 4) formMessage = 'The free plan holds four active assignments. Finish one or buy the one-time license.';
     else {
       state.tasks.push({ id: uid('task'), title, course, deadline: deadline.toISOString(), estimateMinutes: Number(data.get('estimate')), doneMinutes: 0, trimMinutes: 0, confidence: data.get('confidence') as StudyTask['confidence'], priority: data.get('priority') as StudyTask['priority'] });
       const plan = buildPlan(state.tasks, state.busyEvents, state.settings);
@@ -502,7 +507,7 @@ function bindEvents(): void {
     storeLicense(token);
     license = await verifyLicense();
     render();
-    showToast(license.active ? 'License active. Unlimited tasks are ready.' : 'That license could not be verified.');
+    showToast(license.active ? 'License active. Unlimited assignments are ready.' : 'That license could not be verified.');
   }));
 }
 
@@ -526,7 +531,7 @@ function updateMetadata(key: string): void {
 
 function render(): void {
   route = window.location.pathname;
-  demo = route === '/demo' || new URLSearchParams(window.location.search).get('demo') === '1';
+  demo = isDemoUrl(window.location.href);
   const known = ['/', '/planner', '/demo', '/privacy', '/terms'];
   const view = demo ? planner() : route === '/' ? landing() : route === '/planner' ? planner() : route === '/privacy' ? privacy() : route === '/terms' ? terms() : notFound();
   app.innerHTML = view;
@@ -537,10 +542,12 @@ function render(): void {
 }
 
 async function navigate(path: string): Promise<void> {
+  const wasDemo = demo;
+  const target = new URL(path, window.location.origin);
   history.pushState({}, '', path);
-  const nextDemo = path === '/demo';
-  if (nextDemo) state = makeDemoState();
-  else if (path === '/planner' && demo) state = (await loadState()) ?? emptyState();
+  const nextDemo = isDemoUrl(target.href);
+  if (nextDemo && !wasDemo) state = makeDemoState();
+  else if (target.pathname === '/planner' && wasDemo) state = (await loadState()) ?? emptyState();
   window.scrollTo(0, 0);
   render();
   const heading = document.querySelector<HTMLElement>('h1');
@@ -557,7 +564,7 @@ async function start(): Promise<void> {
   void verifyLicense().then((verified) => { license = verified; render(); });
   window.addEventListener('popstate', async () => {
     const wasDemo = demo;
-    demo = window.location.pathname === '/demo';
+    demo = isDemoUrl(window.location.href);
     if (demo) state = makeDemoState();
     else if (wasDemo) state = (await loadState()) ?? emptyState();
     render();

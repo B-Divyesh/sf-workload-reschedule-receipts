@@ -1,6 +1,6 @@
 # Demo sandbox
 
-- URL: `https://workload-reschedule-receipts.sociobot.in/demo` (local: `http://localhost:5173/demo`)
+- URL: `https://workload-reschedule-receipts.sociobot.in/?demo=1` (local: `http://localhost:5173/?demo=1`; `/demo` is an alias)
 - Sample: four assignments, two calendar events, a missed biology block, a revised plan, and a reschedule receipt.
 - Reset: choose **Reset demo** in the persistent demo banner.
 - Leave: choose **Start for real**. Real IndexedDB data is then loaded; sample data is discarded.

@@ -1,1 +1,1 @@
-Reschedule missed study time and see deadlines at risk.
+Reschedule missed study time and show which deadlines are at risk.
